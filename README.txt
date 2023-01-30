@@ -1,4 +1,4 @@
-Space Test v0.02
+Space Test v0.04
 
 Features:
 
@@ -19,6 +19,9 @@ Features:
 
 Anyway:
 
+- Everything-agnostic, can help testing anything (and anywhere, with a
+  working (a)sh shell)
+
 - Frugal & self-containing; depends on basically nothing (but BusyBox,
   and optionally gnumake/nmake, if you also want to autobuild stuff;
   and even the built-in `make` of BusyBox would suffice if you didn't
@@ -33,21 +36,32 @@ Anyway:
   - trivially lean & simple script format:
 
     RUN some exe
-    EXPECT "some result"
+    EXPECT some result
 
   - or running shell commands:
 
     SH echo -n this
-    EXPECT "this"
+    EXPECT this
 
-  - or just write anything in normal BB .sh (ash) syntax, as usual:
+    SH echo this with newline
+    EXPECT "this with newline
+    "
+
+    SH "echo command 1; echo command 2"
+    SH echo command 3
+    EXPECT "command 1
+    command 2
+    command 3
+    "
+
+  - or mix with anything in normal BB .sh (ash) syntax, as usual:
 
     if [ -n "$SOME_FLAG" ]; then
-        prepare_something
+        prepare_something         # no output captured
         RUN stuff
-        EXPECT "one thing"
+        EXPECT "one thing"        # Quoting these is a good habit.
     else
-        prepare_something_else
+        prepare_something_else    # (again, with off-band outputs)
         RUN stuff
         EXPECT "other thing"
     fi
@@ -56,11 +70,23 @@ Anyway:
 
     RUN some command
     RUN other command
-    RUN other command --with-param 
+    RUN command --with-params
 
     EXPECT "some result
-    and some other results
-    accumulated, plus a newline:
+    some other results
+    accumulated; mind the last newline:
+    "
+
+    or, equivalently:
+
+    RUN some command
+    EXPECT "some result
+    "
+    RUN other command
+    EXPECT "some other results
+    "
+    RUN command --with-params
+    EXPECT "accumulated; mind the last newline:
     "
 
   - Or standalone "expect" files, too.

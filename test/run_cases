@@ -15,7 +15,7 @@ if [ "$*" == "" ]; then
 	find -name '*.case' -not -path "./_*/*" -print0 | xargs -0 -n1 ${runner}
 	errors=$?
 else
-	for c in "$*"; do 
+	for c in "$@"; do
 		${runner} "$c"
 		if [ ! $? -eq 0 ]; then errors=$(($errors + 1)); fi
 	done
