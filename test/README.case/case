@@ -1,9 +1,6 @@
-RUN README.exe
-RUN README.exe jkh34j5kh32
-RUN README.exe -h
-RUN README.exe -x
-RUN README.exe --long
-RUN README.exe -x --long
-RUN README.exe --unknown=77
+SH echo -n this
+EXPECT this
 
-# CLEAN s/[^ ]+.+\.exe/\.\.\.\.exe/
+SH echo this with newline
+EXPECT "this with newline
+"

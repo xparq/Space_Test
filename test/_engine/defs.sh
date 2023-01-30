@@ -1,4 +1,4 @@
-export SPACE_TEST_VERSION=0.02
+export SPACE_TEST_VERSION=0.04
 
 #
 # Stuff here depends on the settings prepared by run_case!
@@ -114,7 +114,8 @@ SH(){
 
 #-----------------------------------------------------------------------------
 EXPECT(){
-	export EXPECT=$*
+	# Reset by the test case runner (run_case)!
+	EXPECT=${EXPECT}$*
 }
 
 EXCEPT(){

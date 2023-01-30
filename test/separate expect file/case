@@ -1,0 +1,4 @@
+SH "echo command 1; echo command 2"
+SH echo command 3
+
+EXPECT ignored with separate file.

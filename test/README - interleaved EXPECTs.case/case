@@ -1,0 +1,10 @@
+	SH  echo some result
+	EXPECT  "some result
+"
+	SH echo some other results
+	EXPECT "some other results
+"
+#!! Have to escape the ';'... Sucks!
+	SH echo "accumulated\; mind the last newline:"
+	EXPECT  "accumulated; mind the last newline:
+"

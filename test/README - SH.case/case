@@ -1,0 +1,6 @@
+    SH "echo command 1; echo command 2"
+    SH echo command 3
+    EXPECT "command 1
+    command 2
+    command 3
+    "

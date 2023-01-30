@@ -97,6 +97,7 @@ fi
 
 # Finally, run the case...
 failed=0
+EXPECT=
 case_variant_counter=0
 . "${case_script}"
 
