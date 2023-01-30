@@ -1,9 +1,8 @@
-# v0.01
+export SPACE_TEST_VERSION=0.02
 
 #
 # Stuff here depends on the settings prepared by run_case!
 #
-
 
 ERROR(){
 	echo "- ERROR: $*" >&2
@@ -54,7 +53,7 @@ get_case_name(){
 	echo ${name}
 }
 
-
+#-----------------------------------------------------------------------------
 RUN(){
 	if [ "${CASE}" == "" ]; then
 		ERROR 'test case name not set (via CASE=...)!'
@@ -86,6 +85,7 @@ RUN(){
 	cd "${savecd}"
 }
 
+#-----------------------------------------------------------------------------
 SH(){
 #!!	run sh -c \"$*\"
 #!!	run sh -c "$*"
@@ -112,6 +112,14 @@ SH(){
 	cd "${savecd}"
 }
 
+#-----------------------------------------------------------------------------
+EXPECT(){
+	export EXPECT=$*
+}
+
+EXCEPT(){
+	ERROR "Well, well... Been there, done that! ;)"
+}
 
 check_make_flavor(){
 	if [[ -n "${MAKE}" ]]; then echo "${MAKE}"; return 0; fi

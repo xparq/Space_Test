@@ -15,7 +15,7 @@ else
 	RUN exename
 fi
 
-EXPECT="\
+EXPECT "\
  -> 
 / -> 
 // -> 

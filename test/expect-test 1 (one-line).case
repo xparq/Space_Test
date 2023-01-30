@@ -1,2 +1,2 @@
 SH echo -n one two
-EXPECT="one two"
+EXPECT "one two"
