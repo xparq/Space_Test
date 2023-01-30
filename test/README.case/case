@@ -1,0 +1,9 @@
+RUN README.exe
+RUN README.exe jkh34j5kh32
+RUN README.exe -h
+RUN README.exe -x
+RUN README.exe --long
+RUN README.exe -x --long
+RUN README.exe --unknown=77
+
+# CLEAN s/[^ ]+.+\.exe/\.\.\.\.exe/

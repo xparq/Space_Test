@@ -1,0 +1,10 @@
+tmp/
+*.tmp
+*.obj
+*.exe
+*.o
+*.out
+*.err
+*.bak
+*.old
+*.off
