@@ -1,10 +1,75 @@
+Space Test v0.01
+
 Features:
 
-- ...umm and it supports spaces in test case names!
+- ...umm, supports spaces in test case names?
 
   (But seriously: `make` tools are traditionally incapable of handling
   files with spaces in their names, so in order to keep the chilling
-  frugality of this tool (to only depend on busybox, plus either
-  gnumake or nmake (both tiny executables that I might just toss
-  into this repo later "for completenes"...), so basically overcoming
-  that was the single biggest challenge in putting this together...)
+  frugality of this tool (to only depend on BusyBox, plus either
+  gnumake or nmake (both tiny executables that I might just toss into
+  the repo later* "for completeness"...)), so, basically: overcoming
+  that was the single biggest challenge in putting this together.
+  Oh, BTW, see, even GitHub still can't support spaces in repo names! ;) )
+
+  ----
+  * Well, NMAKE.EXE is linked against a bunch of DLLs (still <1MB total,
+    260K compressed!), so that's a shaky prospect, but as a figure of speech,
+    it's still competitive...
+
+Anyway:
+
+- Frugal & self-containing; depends on basically nothing (but BusyBox,
+  and optionally gnumake/nmake, if you also want to autobuild stuff;
+  and even the built-in `make` of BusyBox would suffice if you didn't
+  allow spaces in filenames -- but who'd want to torture themselves?...)
+
+- Extremely small (2.5 shell scripts + some change; <500 lines total)
+
+- Still fairly comfy & flexible test case support:
+  - single-file or subdir test cases
+  - cases can have a custom variation (build) of the (common) test subject
+  - or basically any arbitrary test env/setup whatsoever
+  - trivially lean & simple script format:
+
+    RUN some exe
+    EXPECT "some result"
+
+  - or running shell commands:
+
+    SH echo -n this
+    EXPECT "this"
+
+  - or just write anything in normal BB .sh (ash) syntax, as usual:
+
+    if [ -n "$SOME_FLAG" ]; then
+        prepare_something
+        RUN stuff
+        EXPECT "one thing"
+    else
+        prepare_something_else
+        RUN stuff
+        EXPECT "other thing"
+    fi
+
+- Multiple test (variation) runs in a single case:
+
+    RUN some command
+    RUN other command
+    RUN other command --with-param 
+
+    EXPECT "some result
+    and some other results
+    accumulated, plus a newline:
+    "
+
+  - Or standalone "expect" files, too.
+
+- "GitHub-Actions-ready" MSVC and GCC autobuild (for both test-subject
+  and custom test-case code)
+  BTW, I've hacked this together for this exact purpose, in fact.
+  (It's ridiculously primitive and limited yet, and C++ only, etc.,
+  but good enough for sales...)
+
+- Doesn't require CMake (e.g. to replace trivial single one-liner compiler
+  commands with multi-100 megs of opaque, fragile, ugly complexity).
