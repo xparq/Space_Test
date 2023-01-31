@@ -8,20 +8,23 @@ export _TEST_ENGINE_DIR=`realpath ${_TEST_ENGINE_DIR}`
 . _engine/defs.sh
 retval=$?; if [[ "$retval" != "0" ]]; then exit $retval; fi
 
-case_path=`get_case_path $1`
-retval=$?; if [[ "$retval" != "0" ]]; then exit $retval; fi
+if ! case_path=`get_case_path $1`; then exit 1; fi    # `... exit $?` won't work, it's 0 by then! But why??
 
 #!
-#! Now we have a path to the test case, but it can be either a single file
-#! or a dir. This script must handle the differences.
+#! Now we have a path to the test case (or ""!).
+#! It can be either a single file or a test case dir.
+#! This script must handle the differences.
 #!
 
-export CASE=`get_case_name ${case_path}`
-retval=$?; if [[ "$retval" != "0" ]]; then exit $retval; fi
+#! WOW!... Jesus FC!... :-/ Had to separate the `export` from setting it,
+#! otherwise $? coming from the func. would be reset to 0! :-ooo
+export CASE
+if ! CASE=`get_case_name ${case_path}`; then exit 2; fi
+
 
 echo "---------------------------------------------------------------"
+DEBUG Identified \"$1\" as test case [$CASE] at \"$case_path\"
 echo CASE \"${CASE}\"
-	# (at '${case_path}')
 
 if [[ ! -d  "${case_path}" ]]; then
 	case_script="${case_path}"
@@ -40,19 +43,9 @@ fi
 #
 # Run a test case via a .case definition...
 #
-#!!?? Should also support running any arbitrary exe directly, letting it
-#!!?? not interfere with the test tools at all; in that case a separate script
-#!!?? should tell what the expected results are (not the .case file itself).
-#!!   
-#!!   Could always be just run as test case variant, which are native exes anyway!
-#!!   
 
-#
-#!! Depending on whether this is a native exe or an instrumented .case script,
-#!! the output needs to be handled differently: full redirection for 
-#
-
-# Work file layout... (Preparing the exp. results file usually requires running the case first!)
+# Prep. the tmp work file locations...
+#! Note: preparing the exp. results file usually requires running the case first (for its EXPECT clauses)!
 outfile="${TMP_DIR}/${CASE}.out"
 errfile="${TMP_DIR}/${CASE}.err"
 retfile="${TMP_DIR}/${CASE}.retval"
@@ -62,6 +55,7 @@ test -f "${outfile}" && rm "${outfile}"
 test -f "${errfile}" && rm "${errfile}"
 test -f "${retfile}" && rm "${retfile}"
 
+#!!Move this to a function in defs:
 # Run a build for the test case if it seems to need one... (and $MAKE is set)
 MAKE=`check_make_flavor`
 
@@ -95,14 +89,16 @@ if [[ -n "${MAKE}" && -n "${cpp}" ]]; then
 	cd "${dirsave}"
 fi
 
-# Finally, run the case...
+#-----------------------------------
+# Finally, run (source) the case...
+#-----------------------------------
 failed=0
 EXPECT=
 case_variant_counter=0
 . "${case_script}"
 
-if [[ "$?" != "0" ]]; then
-	echo "- ERROR: test script failed with unexpected error! Aborting."
+retval=$?; if [[ "$retval" != "0" ]]; then
+	ERROR "Test script failed with unexpected error $retval!"
 	exit 99
 fi
 

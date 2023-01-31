@@ -1,15 +1,22 @@
-export SPACE_TEST_VERSION=0.04
+export SPACE_TEST_VERSION=0.05
 
 #
 # Stuff here depends on the settings prepared by run_case!
 #
 
+FATAL(){
+# Well, obviously, only call this from where it's OK to catapult without cleanup!
+	ERROR $1
+	exit ${2:-1}
+}
 ERROR(){
 	echo "- ERROR: $*" >&2
 }
-
 WARNING(){
 	echo "- WARNING: $*" >&2
+}
+DEBUG(){
+	test -n "$SPACE_DEBUG" && echo "----DBG: $*" >&2
 }
 
 
@@ -31,21 +38,39 @@ fi
 
 
 get_case_path(){
+	#!!Shouldn't we use $@ here too, as in the main runner loop?!
 	case_path=${TEST_DIR}/$*
 	# Not enough just to check for empty $1...:
-	if [ "`realpath \"${case_path}\"`" == "`realpath \"${TEST_DIR}\"`" ]; then
+	if [[ "`realpath \"${case_path}\"`" == "`realpath \"${TEST_DIR}\"`" ]]; then
 		ERROR "Invalid test case path '${case_path}'!"
 		return 1
 	fi
-	if [ ! -e "${case_path}" ]; then
-		if [ -e "${case_path}.case" ]; then
-			case_path="${case_path}.case"
+	if [[ ! -e "${case_path}" ]]; then
+		if [[ -e "${case_path}.case" ]]; then
+#DEBUG a
+			echo "${case_path}.case"
+			return 0
 		else
 			ERROR "Test case '${case_path}' not found!"
 			return 1
 		fi
 	fi
-	echo ${case_path}
+	# Exists; check if test case: if file -> ends with .case, if dir -> dir/case exists
+	if [[ -e "${case_path}/case" ]]; then
+		# Fine, path is already a case dir.
+#DEBUG b
+		echo "${case_path}"
+		return 0
+	else
+		if [[ "${case_path%.case}" != "${case_path}" ]]; then
+#DEBUG "Existing test case file identified: ${case_path}"
+			echo "${case_path}"
+			return 0
+		fi
+	fi
+
+	ERROR "Test case '${case_path}' not found!"
+	return 1
 }
 
 get_case_name(){
