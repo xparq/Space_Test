@@ -74,8 +74,8 @@ Anyway:
 
     EXPECT "some result
     some other results
-    accumulated; mind the last newline:
-    "
+    accumulated
+    " # (Assuming those commands print with trailing newlines.)
 
     or, equivalently:
 
@@ -86,7 +86,7 @@ Anyway:
     EXPECT "some other results
     "
     RUN command --with-params
-    EXPECT "accumulated; mind the last newline:
+    EXPECT "accumulated
     "
 
   - Or standalone "expect" files, too.
