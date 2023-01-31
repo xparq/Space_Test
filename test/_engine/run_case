@@ -8,7 +8,7 @@ export _TEST_ENGINE_DIR=`realpath ${_TEST_ENGINE_DIR}`
 . _engine/defs.sh
 retval=$?; if [[ "$retval" != "0" ]]; then exit $retval; fi
 
-if ! case_path=`get_case_path $1`; then exit 1; fi    # `... exit $?` won't work, it's 0 by then! But why??
+case_path=`get_case_path $1` || FATAL "Test case \"$1\" not found!"
 
 #!
 #! Now we have a path to the test case (or ""!).
@@ -19,7 +19,7 @@ if ! case_path=`get_case_path $1`; then exit 1; fi    # `... exit $?` won't work
 #! WOW!... Jesus FC!... :-/ Had to separate the `export` from setting it,
 #! otherwise $? coming from the func. would be reset to 0! :-ooo
 export CASE
-if ! CASE=`get_case_name ${case_path}`; then exit 2; fi
+CASE=`get_case_name ${case_path}` || FATAL "get_case_name can't really fail, so dunno what to say..." 99
 
 
 echo "---------------------------------------------------------------"
@@ -30,14 +30,12 @@ if [[ ! -d  "${case_path}" ]]; then
 	case_script="${case_path}"
 	TEST_CASE_DIR=`dirname "${case_path}"`
 else
-	#!!Do better than hardcodings like this:
-	case_script="${case_path}/case"
+	case_script="${case_path}/${TEST_CASE_SCRIPT_NAME}"
 	TEST_CASE_DIR=${case_path}
 fi
 
 if [[ ! -e "${case_script}" ]]; then
-	echo "- ERROR: test case script '${case_script}' not found!"
-	return 1
+	FATAL "Test script not found: \"${case_script}\"!"
 fi
 
 #

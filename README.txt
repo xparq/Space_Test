@@ -1,4 +1,4 @@
-Space Test v0.06
+Space Test v0.07
 
 Features:
 

@@ -1,4 +1,4 @@
-export SPACE_TEST_VERSION=0.06
+export SPACE_TEST_VERSION=0.07
 
 #
 # Stuff here (still) depends on some settings prepared by `run_case`!
@@ -8,7 +8,9 @@ FATAL(){
 # E.g. FATAL "Boops! Someone else did it!" 9
 # The exit code is optional (default: 1).
 # Obviously, only call this from where it's OK to catapult without cleanup!
-	ERROR $1
+	echo
+	echo "ERROR: $*" >&2
+	echo
 	exit ${2:-1}
 }
 ERROR(){
@@ -47,6 +49,8 @@ fi
 
 # Set some "hard" defaults:
 EXPECT_FILE_NAME=${EXPECT_FILE_NAME:-EXPECT}
+TEST_CASE_SCRIPT_NAME=${TEST_CASE_SCRIPT_NAME:-CASE}
+TEST_CASE_FILE_EXT=${TEST_CASE_FILE_EXT:-.case}
 
 
 #-----------------------------------------------------------------------------
@@ -59,41 +63,42 @@ get_case_path(){
 		return 1
 	fi
 	if [[ ! -e "${case_path}" ]]; then
-		if [[ -e "${case_path}.case" ]]; then
-#DEBUG a
-			echo "${case_path}.case"
+		if [[ -e "${case_path}${TEST_CASE_FILE_EXT}" ]]; then
+#DEBUG "Existing single-file TC script identified via auto-suffixing: ${case_path}"
+			echo "${case_path}${TEST_CASE_FILE_EXT}"
 			return 0
 		else
-			ERROR "Test case \"$*\" not found!"
+			# ERROR "Test case \"$*\" not found!"
 			return 1
 		fi
 	fi
 	# Exists; check if test case: if file -> ends with .case, if dir -> dir/case exists
-	if [[ -e "${case_path}/case" ]]; then
+	if [[ -e "${case_path}/${TEST_CASE_SCRIPT_NAME}" ]]; then
 		# Fine, path is already a case dir.
-#DEBUG b
+#DEBUG "Existing test script in TC dir identified: ${case_path}"
 		echo "${case_path}"
 		return 0
 	else
-		if [[ "${case_path%.case}" != "${case_path}" ]]; then
-#DEBUG "Existing test case file identified: ${case_path}"
+		if [[ "${case_path%${TEST_CASE_FILE_EXT}}" != "${case_path}" ]]; then
+#DEBUG "Existing single-file TC script identified as-is: ${case_path}"
 			echo "${case_path}"
 			return 0
 		fi
 	fi
 
-	ERROR "Test case \"$*\" not found!"
+	# ERROR "Test case \"$*\" not found!"
 	return 1
 }
 
+#-----------------------------------------------------------------------------
 get_case_name(){
-	name=`basename "${*%.case}"`
+	name=`basename "${*%$TEST_CASE_FILE_EXT}"`
 	echo ${name}
 }
 
 #-----------------------------------------------------------------------------
 RUN(){
-	if [ "${CASE}" == "" ]; then
+	if [ -z "$CASE" ]; then
 		ERROR 'test case name not set (via CASE=...)!'
 		return 3
 	fi
@@ -129,7 +134,7 @@ SH(){
 #!!	run sh -c "$*"
 #!!	- didn't work, maybe due to quoting problems?!
 
-	if [ "${CASE}" == "" ]; then
+	if [ -z "$CASE" ]; then
 		ERROR 'test case name not set (via CASE=...)!'
 		return 3
 	fi

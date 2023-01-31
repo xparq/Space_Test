@@ -1,0 +1,2 @@
+SH echo -n Fine, found!
+EXPECT Fine, found!
