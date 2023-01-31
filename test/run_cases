@@ -1,11 +1,4 @@
 #!/bin/sh
-#export SPACE_DEBUG=1
-
-# Preset one to disable autodetect:
-#export MAKE=nmake
-#export MAKE=gnumake
-
-
 runner=_engine/run_case
 
 errors=0

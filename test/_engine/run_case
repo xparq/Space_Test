@@ -45,7 +45,8 @@ fi
 #
 
 # Prep. the tmp work file locations...
-#! Note: preparing the exp. results file usually requires running the case first (for its EXPECT clauses)!
+#! Note: preparing the exp. results file requires running the case script
+#!       first for its EXPECT clauses, if it has no standalone EXPECT file!
 outfile="${TMP_DIR}/${CASE}.out"
 errfile="${TMP_DIR}/${CASE}.err"
 retfile="${TMP_DIR}/${CASE}.retval"
@@ -103,8 +104,9 @@ retval=$?; if [[ "$retval" != "0" ]]; then
 fi
 
 # Find or dyn. regenerate the expfile if defined in a .case script
-if [[ -e         "${TEST_CASE_DIR}/expect" ]]; then
-	 expfile="${TEST_CASE_DIR}/expect"
+if [[ -e         "${TEST_CASE_DIR}/${EXPECT_FILE_NAME}" ]]; then
+	 expfile="${TEST_CASE_DIR}/${EXPECT_FILE_NAME}"
+
 # NOTE:
 # In a mixed "GNU tools on Windows" env (like mine) diff may not be able
 # to ignore CR/LF differences, so we need to strip those manually.

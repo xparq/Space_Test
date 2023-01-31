@@ -1,4 +1,4 @@
-Space Test v0.05
+Space Test v0.06
 
 Features:
 
@@ -89,11 +89,15 @@ Anyway:
     EXPECT "accumulated
     "
 
-  - Or standalone "expect" files, too.
+  - or standalone "EXPECT" files (overriding any EXPECT clauses)
+
+- Flexible runner:
+  `run_cases` for all, or `run_cases some*`, or `run_cases test-this "and this"`,
+  or with direct paths: `run_cases *.case`, or `run_cases ./here/tc-4.case`
 
 - "GitHub-Actions-ready" MSVC and GCC autobuild (for both test-subject
   and custom test-case code)
-  BTW, I've hacked this together for this exact purpose, in fact.
+  BTW, I've hacked this together just for this exact purpose, in fact.
   (It's ridiculously primitive and limited yet, and C++ only, etc.,
   but good enough for sales...)
 

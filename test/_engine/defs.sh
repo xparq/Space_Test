@@ -1,11 +1,13 @@
-export SPACE_TEST_VERSION=0.05
+export SPACE_TEST_VERSION=0.06
 
 #
-# Stuff here depends on the settings prepared by run_case!
+# Stuff here (still) depends on some settings prepared by `run_case`!
 #
 
 FATAL(){
-# Well, obviously, only call this from where it's OK to catapult without cleanup!
+# E.g. FATAL "Boops! Someone else did it!" 9
+# The exit code is optional (default: 1).
+# Obviously, only call this from where it's OK to catapult without cleanup!
 	ERROR $1
 	exit ${2:-1}
 }
@@ -19,12 +21,19 @@ DEBUG(){
 	test -n "$SPACE_DEBUG" && echo "----DBG: $*" >&2
 }
 
+# DEFAULTS
+#-----------------------------------------------------------------------------
 
+# This one should come preset:
 if [ "${TEST_DIR}" == "" ]; then
-	ERROR "TEST_DIR not defined! Do it before init'ing the defs.!"
+	ERROR "TEST_DIR not defined! Do it before init'ing the rest!"
 	return 6
 fi
 
+# Load (optional) config:
+test -e "${TEST_DIR}/ .cfg" && . "${TEST_DIR}/ .cfg"
+
+# Temp. dir:
 export TMP_DIR="${TEST_DIR}/tmp"
 #!! Fall back on $TMP, $TEMP, /tmp etc...
 if [ ! -d "${TMP_DIR}" ]; then
@@ -36,7 +45,11 @@ if [ ! -d "${TMP_DIR}" ]; then
 	WARNING "${TMP_DIR} did not exist, created."
 fi
 
+# Set some "hard" defaults:
+EXPECT_FILE_NAME=${EXPECT_FILE_NAME:-EXPECT}
 
+
+#-----------------------------------------------------------------------------
 get_case_path(){
 	#!!Shouldn't we use $@ here too, as in the main runner loop?!
 	case_path=${TEST_DIR}/$*
@@ -51,7 +64,7 @@ get_case_path(){
 			echo "${case_path}.case"
 			return 0
 		else
-			ERROR "Test case '${case_path}' not found!"
+			ERROR "Test case \"$*\" not found!"
 			return 1
 		fi
 	fi
@@ -69,7 +82,7 @@ get_case_path(){
 		fi
 	fi
 
-	ERROR "Test case '${case_path}' not found!"
+	ERROR "Test case \"$*\" not found!"
 	return 1
 }
 
