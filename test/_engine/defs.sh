@@ -1,4 +1,4 @@
-export SPACE_TEST_VERSION=0.08
+export SPACE_TEST_VERSION=0.09
 
 #
 # Stuff here (still) depends on some settings prepared by `run_case`!
@@ -48,6 +48,7 @@ if [ ! -d "${TMP_DIR}" ]; then
 fi
 
 # Set some "hard" defaults:
+export TEST_NAME=${TEST_NAME:-test}
 EXPECT_FILE_NAME=${EXPECT_FILE_NAME:-EXPECT}
 TEST_CASE_SCRIPT_NAME=${TEST_CASE_SCRIPT_NAME:-CASE}
 TEST_CASE_FILE_EXT=${TEST_CASE_FILE_EXT:-.case}
@@ -246,9 +247,10 @@ build_dir(){
 		mkcmd="${mkcmd} ${add_makefile}"
 	fi
 
+	export TEST_NAME
+	export TEST_DIR
 	export CASE
 	export TEST_CASE_DIR
-	export TEST_DIR
 	export TOOLSET=`get_toolset`
 	export TEST_ENGINE_DIR="$_TEST_ENGINE_DIR"
 	dirsave=`pwd`
