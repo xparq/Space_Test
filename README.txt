@@ -90,6 +90,8 @@ Anyway:
 
   - or standalone "EXPECT" files (overriding any EXPECT clauses)
 
+- Arbitrary multi-level test tree hierarchy
+
 - Flexible runner:
   `run_cases` for all, or `run_cases some*`, or `run_cases test-this "and this"`,
   or with direct paths: `run_cases *.case`, or `run_cases ./here/tc-4.case`

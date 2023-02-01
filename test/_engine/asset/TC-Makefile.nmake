@@ -1,8 +1,3 @@
-# Should come from the runner; empty for "root-level" cases:
-#DIR_OFFSET=../
-	# Subdir depth under the main test dir ($(TEST_DIR)):
-	# (Add trailing sep. for uniform prepending even if empty!)
-
 # BEWARE: NMake fails to execute commands as ../cmd, but ..\cmd works! :-o So:
 DIR_OFFSET_BACKSLASH_FIXUP=$(DIR_OFFSET:/=\)
 TEST_DIR_BACKSLASH_FIXUP=$(TEST_DIR:/=\)

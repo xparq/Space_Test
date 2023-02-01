@@ -222,7 +222,7 @@ build_dir(){
 	local add_makefile mkcmd dirsave result
 	#! The makefiles themselves can't easily examine wildcard sources, so:
 	cpp=`find "$build_dir" -maxdepth 1 -name '*.cpp' -print -quit`
-		#!!That `-maxdepth 1`... Builds would break at arbitrary depth!
+		#!!That `-maxdepth 1` is pretty arbitrary, but this entire crude autobuild support is!...
 	if [[ -z "${MAKE}" || -z "${cpp}" ]]; then
 		# Nothing to do.
 		return 0

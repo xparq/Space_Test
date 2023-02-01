@@ -1,8 +1,3 @@
-# Should come from the runner; empty for "root-level" cases:
-#DIR_OFFSET=../
-	# Subdir depth under the main test dir ($(TEST_DIR)):
-	# (Add trailing sep. for uniform prepending even if empty!)
-
 #!!Leftover Windows dependency, clean it up!
 EXE=$(CASE).exe
 
