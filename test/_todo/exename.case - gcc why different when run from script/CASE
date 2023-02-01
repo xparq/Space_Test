@@ -16,10 +16,26 @@ kept: exename.exe
 cut: exename
 "
 
+# This'll work differently on MSVC and e.g. MinGw-style GCC: the
+# latter keeps the actual cmdline, while MSVC seems to normalize it!
+
 RUN exename --keep-ext
 RUN exename
+
+if [[ -n "$VCToolsVersion" ]]; then
+
+#	echo MSVC! >&2
 
 	EXPECT "\
 kept: exename.exe
 cut: exename
 "
+else
+
+#	echo GCC! >&2
+
+	EXPECT "\
+kept: exename
+cut: exename
+"
+fi

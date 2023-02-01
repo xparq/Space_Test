@@ -1,4 +1,4 @@
-RUN args-test.exe -x
+RUN $TEST_NAME -x
 
 EXPECT "\
 -------- NAMED:

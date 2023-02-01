@@ -1,26 +1,29 @@
 #!/bin/sh
 
+# These must be set before initializing anything else (incl. calling defs.sh):
+#!! Which is pretty stupid, as that one could do this same thing, and then
+#!! the caller could just run this more easily...
 export TEST_DIR=${TEST_DIR:-`pwd`}
 #echo Test dir is: \"$TEST_DIR\"
 _TEST_ENGINE_DIR=`dirname $0`
 export _TEST_ENGINE_DIR=`realpath ${_TEST_ENGINE_DIR}`
 
-. _engine/defs.sh
+. "$_TEST_ENGINE_DIR/defs.sh"
 retval=$?; if [[ "$retval" != "0" ]]; then exit $retval; fi
 
 case_path=`get_case_path $1` || FATAL "Test case \"$1\" not found!"
 
-#!
+#!----------------------------------------------------------------------------
 #! Now we have a path to the test case (or ""!).
-#! It can be either a single file or a test case dir.
+#! It can be either a single file or a test case dir, though!
 #! This script must handle the differences.
-#!
+#!----------------------------------------------------------------------------
 
-#! WOW!... Jesus FC!... :-/ Had to separate the `export` from setting it,
-#! otherwise $? coming from the func. would be reset to 0! :-ooo
-export CASE
 CASE=`get_case_name ${case_path}` || FATAL "get_case_name can't really fail, so dunno what to say..." 99
-
+export CASE
+	#! WOW!... Jesus FC!... :-/ Had to separate the `export` from setting it,
+	#! otherwise $? coming from the func. would be reset to 0! :-ooo
+	#! -> "SC2155" (https://github.com/koalaman/shellcheck/wiki/SC2155)
 
 echo "---------------------------------------------------------------"
 DEBUG Identified \"$1\" as test case [$CASE] at \"$case_path\"
@@ -54,39 +57,10 @@ test -f "${outfile}" && rm "${outfile}"
 test -f "${errfile}" && rm "${errfile}"
 test -f "${retfile}" && rm "${retfile}"
 
-#!!Move this to a function in defs:
+MAKE=`get_make_flavor`
+
 # Run a build for the test case if it seems to need one... (and $MAKE is set)
-MAKE=`check_make_flavor`
-
-#!!the generic makefiles can't check *.cpp yet!
-cpp=`find "${TEST_CASE_DIR}" -maxdepth 1 -name '*.cpp' -print -quit`
-if [[ -n "${MAKE}" && -n "${cpp}" ]]; then
-	a=`realpath "${TEST_CASE_DIR}"`
-	b=`realpath "${TEST_DIR}"`
-	#!!shuld be less dumb...:
-	if [[ "$a" != "$b" ]]; then
-		export DIR_OFFSET=../
-	fi
-
-	if [ "${MAKE}" == "nmake" ]; then
-		#!BEWARE: /nologo, instead of -nologo, made Git-sh expand it to /full/path/nologo! :-o
-		mkcmd="nmake -nologo"
-		add_makefile="-f ${_TEST_ENGINE_DIR}/asset/TC-Makefile.nmake"
-	else
-		mkcmd="${MAKE}"
-		add_makefile="-f ${_TEST_ENGINE_DIR}/asset/TC-Makefile.gmake"
-	fi
-	if [[ -e "${TEST_CASE_DIR}/Makefile.${MAKE}" ]]; then
-		mkcmd="${mkcmd} -f Makefile.${MAKE}"
-	elif [[ ! -e "${TEST_CASE_DIR}/Makefile" ]]; then   # <- only add if there's no local Makefile
-		mkcmd="${mkcmd} ${add_makefile}"
-	fi
-
-	dirsave=`pwd`
-	cd "${TEST_CASE_DIR}"
-	${mkcmd}
-	cd "${dirsave}"
-fi
+build_dir "$TEST_CASE_DIR" || FATAL "Failed to build the test case!" $?
 
 #-----------------------------------
 # Finally, run (source) the case...
@@ -106,7 +80,7 @@ if [[ -e         "${TEST_CASE_DIR}/${EXPECT_FILE_NAME}" ]]; then
 	 expfile="${TEST_CASE_DIR}/${EXPECT_FILE_NAME}"
 
 # NOTE:
-# In a mixed "GNU tools on Windows" env (like mine) diff may not be able
+# In a mixed "GNU tools on Windows" env. (like mine) diff may not be able
 # to ignore CR/LF differences, so we need to strip those manually.
 # (-> e.g.: https://github.com/skeeto/w64devkit/issues/45)
 # One easy way is to normalize the newlines in *both* the output
@@ -131,7 +105,7 @@ normalize_crlf "${expfile}"
 normalize_crlf "${outfile}"
 
 #echo diff -b "${outfile}" "${expfile}"
-     diff -b "${outfile}" "${expfile}"
+     diff -b "${expfile}" "${outfile}"
 
 if [[ $? == 0 ]]; then
 	echo "  OK."

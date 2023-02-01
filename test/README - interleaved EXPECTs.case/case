@@ -4,7 +4,7 @@
 	SH echo some other results
 	EXPECT "some other results
 "
-#!! Have to escape the ';'... Sucks!
+#!!Have to escape the ';' even in quotes!... Sucks.
 	SH echo "accumulated\; mind the last newline:"
 	EXPECT  "accumulated; mind the last newline:
 "

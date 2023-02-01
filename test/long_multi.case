@@ -1,4 +1,4 @@
-RUN args-test.exe --take-two a b c
+RUN $TEST_NAME --take-two a b c
 
 EXPECT "\
 -------- NAMED:
