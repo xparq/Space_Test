@@ -6,8 +6,8 @@ Features:
 
   (But seriously: `make` tools are traditionally incapable of handling
   files with spaces in their names, so in order to keep the chilling
-  frugality of this tool (to only depend on BusyBox, plus either
-  gnumake or nmake (both tiny executables that I might just toss into
+  frugality of this tool (to only depend on BusyBox, plus optionally on
+  gnumake or nmake (both small executables that I might just toss into
   the repo later* "for completeness"...)), so, basically: overcoming
   that was the single biggest challenge in putting this together.
   Oh, BTW, see, even GitHub still can't support spaces in repo names! ;) )
@@ -19,54 +19,53 @@ Features:
 
 Anyway:
 
-- Everything-agnostic, can help testing anything (and anywhere, with a
-  working (a)sh shell)
+- Very small, frugal, self-containing (just a bunch of shell scripts
+  + some change, ~600 lines total)
 
-- Frugal & self-containing; depends on basically nothing (but BusyBox,
-  and optionally gnumake/nmake, if you also want to autobuild stuff;
-  and even the built-in `make` of BusyBox would suffice if you didn't
-  allow spaces in filenames -- but who'd want to torture themselves?...)
+- Depends on basically nothing (but BusyBox, and of course the toolset
+  you may want to use for (auto)building stuff before testing)
 
-- Extremely small (2.5 shell scripts + some change; <500 lines total)
+- Everything-agnostic, can help testing anything (and basically anywhere)
 
-- Still fairly comfy & flexible test case support:
+- Despite the minimalism and early stage, still fairly comfy & flexible:
   - single-file or subdir test cases
   - cases can have a custom variation (build) of the (common) test subject
   - or basically any arbitrary test env/setup whatsoever
   - trivially lean & simple script format:
 
-    RUN some exe
+    RUN something
     EXPECT some result
 
-  - or running shell commands:
+  - or as shell commands:
 
     SH echo -n this
     EXPECT this
 
-    SH echo this with newline
-    EXPECT "this with newline
+    SH echo newline
+    EXPECT "newline
     "
 
-    SH "echo command 1; echo command 2"
+    SH "echo Dir list:; ls -r"
     SH echo command 3
-    EXPECT "command 1
-    command 2
+    EXPECT "Dir list:
+    Hi from the test case dir!
+    CASE
     command 3
     "
 
-  - or mix with anything in normal BB .sh (ash) syntax, as usual:
+  - or mix in any normal .sh (BB ash) syntax:
 
     if [ -n "$SOME_FLAG" ]; then
-        prepare_something         # no output captured
-        RUN stuff
-        EXPECT "one thing"        # Quoting these is a good habit.
+        prepare_something         # no output capture
+        RUN stuff                 # output captured as usual
+        EXPECT "one thing"        # quoting these is a good habit!
     else
-        prepare_something_else    # (again, with off-band outputs)
+        prepare_something_else
         RUN stuff
         EXPECT "other thing"
     fi
 
-- Multiple test (variation) runs in a single case:
+- Multiple test (variant) runs in a single case:
 
     RUN some command
     RUN other command
@@ -77,7 +76,7 @@ Anyway:
     accumulated
     " # (Assuming those commands print with trailing newlines.)
 
-    or, equivalently:
+    or, equivalently, with interleaved EXPECTs:
 
     RUN some command
     EXPECT "some result
@@ -101,5 +100,5 @@ Anyway:
   (It's ridiculously primitive and limited yet, and C++ only, etc.,
   but good enough for sales...)
 
-- Doesn't require CMake (e.g. to replace trivial single one-liner compiler
-  commands with multi-100 megs of opaque, fragile, ugly complexity).
+- Doesn't require CMake (e.g. to replace trivial single-line compiler
+  commands with multi-100 megs of opaque, fragile, ugly complexity)

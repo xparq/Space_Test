@@ -153,7 +153,7 @@ SH(){
 
 	savecd=`pwd`
 	cd "${TEST_CASE_DIR}"
-#	echo "sh -c \"$cmd $args\"" >> "${TMP_DIR}/${CASE}.cmd"
+	echo "sh -c \"$cmd $args\"" >> "${TMP_DIR}/${CASE}.cmd"
 	sh -c "$cmd $args" >> "${TMP_DIR}/${CASE}.out" 2>> "${TMP_DIR}/${CASE}.err"
 	echo $? >> "${TMP_DIR}/${CASE}.retval"
 	cd "${savecd}"
