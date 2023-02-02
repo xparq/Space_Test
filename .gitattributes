@@ -1,3 +1,11 @@
-*	text=auto
+#!!?? Will disabling this help?...
+#*	text=auto
+
 *.sh	text eol=LF
 *.cfg	text eol=LF
+
+# The main frontend commands don't have the .sh extension!
+run_case*	text eol=LF
+
+# This must come after "run_case*" to override for run_case.cmd!
+*.cmd	text eol=CRLF
