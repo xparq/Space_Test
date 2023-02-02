@@ -20,7 +20,7 @@ Features:
 Anyway:
 
 - Very small, frugal, self-containing (just a bunch of shell scripts
-  + some change, ~600 lines total)
+  + some change, <1000 lines total)
 
 - Depends on basically nothing (but BusyBox, and of course the toolset
   you may want to use for (auto)building stuff before testing)

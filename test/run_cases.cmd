@@ -29,10 +29,10 @@ rem	goto endif
 )
 rem else
 rem	This, however, will run the Git GNU commands first:
-	if not exist "%PROGRAMFILES%\Git\bin\sh.exe" (
+	if exist "%PROGRAMFILES%\Git\bin\sh.exe" (
 	set _sh_="%PROGRAMFILES%\Git\bin\sh.exe"
 		rem See at the end, why not set "name=val"!
-	echo Using Git's ^(hopefully^) "POSIX-enforcing" sh variant...
+	echo Using Git's ^(hopefully^) "POSIX-cmd-finding" sh variant...
 ) else (
 	set BB_IN_SPACE=%~dp0_engine/busybox.exe
 
