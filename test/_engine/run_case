@@ -1,15 +1,12 @@
 #!/bin/sh
+if [[ -z "$_TEST_ENGINE_DIR" ]]; then
+	echo "- ERROR: test env. uninitialized! (Run \"init_once.sh\" before \"$0\"!)";
+	exit 101;
+fi
 
-# These must be set before initializing anything else (incl. calling defs.sh):
-#!! Which is pretty stupid, as that one could do this same thing, and then
-#!! the caller could just run this more easily...
-export TEST_DIR=${TEST_DIR:-`pwd`}
-#echo Test dir is: \"$TEST_DIR\"
-_TEST_ENGINE_DIR=`dirname $0`
-export _TEST_ENGINE_DIR=`realpath ${_TEST_ENGINE_DIR}`
+. "$_TEST_ENGINE_DIR/init_per_case.sh" || exit $?
 
-. "$_TEST_ENGINE_DIR/defs.sh"
-retval=$?; if [[ "$retval" != "0" ]]; then exit $retval; fi
+#!!?? How much of the stuff below should actually go to init_per_case?... ;)
 
 case_path=`get_case_path $1` || FATAL "Test case \"$1\" not found!"
 
@@ -41,10 +38,6 @@ if [[ ! -e "${case_script}" ]]; then
 	FATAL "Test script not found: \"${case_script}\"!"
 fi
 
-#
-# Run a test case via a .case definition...
-#
-
 # Prep. the tmp work file locations...
 #! Note: preparing the exp. results file requires running the case script
 #!       first for its EXPECT clauses, if it has no standalone EXPECT file!
@@ -58,6 +51,7 @@ test -f "${errfile}" && rm "${errfile}"
 test -f "${retfile}" && rm "${retfile}"
 
 MAKE=`get_make_flavor`
+	# Will be empty on errors!
 
 # Run a build for the test case if it seems to need one... (and $MAKE is set)
 build_dir "$TEST_CASE_DIR" || FATAL "Failed to build the test case!" $?
@@ -68,6 +62,7 @@ build_dir "$TEST_CASE_DIR" || FATAL "Failed to build the test case!" $?
 failed=0
 EXPECT=
 case_variant_counter=0
+
 . "${case_script}"
 
 retval=$?; if [[ "$retval" != "0" ]]; then
@@ -115,3 +110,17 @@ else
 fi
 
 exit ${failed}
+
+
+#-----------------------------------------------------------------------------
+# LESSONS...:
+
+# NOTE: this "thoughtful precaution" actually made it impossible to ever execute it...:
+#	case_exe="\"./issue 10.exe\""
+# E.g. an earlier comment from run_cmd:
+#	$* didn't work, despite a) apparently proper-looking quoting in the echoed output,
+#	and also b) running the exact same command successfully from the sh command line...
+#	and even c) running it directly from here:
+#	"./issue 10.exe" --long
+# (Neither did any quoting, shift+quoting, backticking, $()ing, whatever... Which is now
+# understandable, in hinsight, but was a nightmare with a dual CMD / sh mindset! :) )

@@ -1,9 +1,3 @@
-export SPACE_TEST_VERSION=0.09
-
-#
-# Stuff here (still) depends on some settings prepared by `run_case`!
-#
-
 FATAL(){
 # E.g. FATAL "Boops! Someone else did it!" 9
 # The exit code is optional (default: 1).
@@ -22,37 +16,6 @@ WARNING(){
 DEBUG(){
 	test -n "$SPACE_DEBUG" && echo "----DBG: $*" >&2
 }
-
-# DEFAULTS
-#-----------------------------------------------------------------------------
-
-# This one should come preset:
-if [ "${TEST_DIR}" == "" ]; then
-	ERROR "TEST_DIR not defined! Do it before init'ing the rest!"
-	return 6
-fi
-
-# Load the (optional) config:
-test -e "${TEST_DIR}/ .cfg" && . "${TEST_DIR}/ .cfg"
-
-# Temp. dir:
-export TMP_DIR="${TEST_DIR}/tmp"
-#!! Fall back on $TMP, $TEMP, /tmp etc...
-if [ ! -d "${TMP_DIR}" ]; then
-	mkdir -p  "${TMP_DIR}"
-	if [ ! -d "${TMP_DIR}" ]; then
-		ERROR "Couldn't create tmp dir '${TMP_DIR}'!:"
-		return 1
-	fi
-	WARNING "${TMP_DIR} did not exist, created."
-fi
-
-# Set some "hard" defaults:
-export TEST_NAME=${TEST_NAME:-test}
-EXPECT_FILE_NAME=${EXPECT_FILE_NAME:-EXPECT}
-TEST_CASE_SCRIPT_NAME=${TEST_CASE_SCRIPT_NAME:-CASE}
-TEST_CASE_FILE_EXT=${TEST_CASE_FILE_EXT:-.case}
-
 
 #-----------------------------------------------------------------------------
 get_case_path(){
@@ -124,7 +87,7 @@ RUN(){
 	# Kludge to prepend ./ if no dir in cmd:
 	normalized_dirpath=`dirname "${cmd}"`
 	cmd=${normalized_dirpath}/${cmd}
-DEBUG Cmdline ready to run: "$cmd" $args
+DEBUG Cmdline to run: "$cmd" $args
 
 	savecd=`pwd`
 	cd "${TEST_CASE_DIR}"
@@ -184,7 +147,7 @@ get_make_flavor(){
 			ERROR "Make tool was set to '${MAKE}', but it can't be found!"
 			return 1
 		fi
-	elif [[ "`get_toolset`" == "msvc" ]]; then
+	elif [[ "$TOOLSET" == "msvc" ]]; then
 		echo nmake    # `-nologo` will be applied implicitly
 	else
 		echo gnumake
@@ -194,24 +157,31 @@ get_make_flavor(){
 }
 
 get_toolset(){
+#!! BB `which` differs from the original GNU version (e.g. at Git), which just can't shut up...
+
 	if [[ -n "$TOOLSET" ]]; then
+#DEBUG "$TOOLSET"
 		echo "$TOOLSET"
 	elif [[ -n "$VCToolsVersion" || -n "$VCTOOLSVERSION" ]]; then #!!?? Must also check upper-cased, BusyBox(?) sometimes(?) converts env var names?!... :-o
-		if which cl >/dev/null; then
+		if which cl 2>/dev/null; then
+#DEBUG msvc
 			echo msvc
 		else
 			ERROR "The MSVC CLI env. is not setup propery! Forgot to run 'vcvars*.bat'?"
 			return 1
 		fi
 	elif [[ -n "$W64DEVKIT" ]]; then
+#DEBUG "gcc/w64devkit"
 		echo "gcc/w64devkit"
-	elif which gcc >/dev/null; then
+	elif which gcc 2>/dev/null; then
+#DEBUG gcc
 		echo gcc
 	else
 		ERROR "Couldn't find any known build toolset!"
 		return 2
 	fi
 
+#DEBUG "(returning 0)"
 	return 0
 }
 
@@ -251,7 +221,7 @@ build_dir(){
 	export TEST_DIR
 	export CASE
 	export TEST_CASE_DIR
-	export TOOLSET=`get_toolset`
+	export TOOLSET=
 	export TEST_ENGINE_DIR="$_TEST_ENGINE_DIR"
 	dirsave=`pwd`
 		cd "${TEST_CASE_DIR}"
@@ -260,17 +230,3 @@ build_dir(){
 	cd "${dirsave}"
 	return $result
 }
-
-
-#-----------------------------------------------------------------------------
-# LESSONS...:
-
-# NOTE: this "thoughtful precaution" actually made it impossible to ever execute it...:
-#	case_exe="\"./issue 10.exe\""
-# E.g. an earlier comment from run_cmd:
-#	$* didn't work, despite a) apparently proper-looking quoting in the echoed output,
-#	and also b) running the exact same command successfully from the sh command line...
-#	and even c) running it directly from here:
-#	"./issue 10.exe" --long
-# (Neither did any quoting, shift+quoting, backticking, $()ing, whatever... Which is now
-# understandable, in hinsight, but was a nightmare with a dual CMD / sh mindset! :) )
