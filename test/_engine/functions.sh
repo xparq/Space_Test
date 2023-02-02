@@ -19,15 +19,15 @@ DEBUG(){
 
 #-----------------------------------------------------------------------------
 get_case_path(){
-	local case_path=${TEST_DIR}/$@ #!!??Why did it work just fine also with $*?!
+	local case_path=$TEST_DIR/$@ #!!??Why did it work just fine also with $*?!
 
 	# Not enough just to check for empty $1...:
-	if [[ "`realpath \"${case_path}\"`" == "`realpath \"${TEST_DIR}\"`" ]]; then
-		ERROR "Invalid test case path '${case_path}'!"
+	if [ "`realpath \"$case_path\"`" == "`realpath \"$TEST_DIR\"`" ]; then
+		ERROR "Invalid test case path \"$case_path\"!"
 		return 1
 	fi
-	if [[ ! -e "${case_path}" ]]; then
-		if [[ -e "${case_path}${TEST_CASE_FILE_EXT}" ]]; then
+	if [ ! -e "$case_path" ]; then
+		if [ -e "${case_path}${TEST_CASE_FILE_EXT}" ]; then
 #DEBUG "Existing single-file TC script identified via auto-suffixing: ${case_path}"
 			echo "${case_path}${TEST_CASE_FILE_EXT}"
 			return 0
@@ -37,7 +37,7 @@ get_case_path(){
 		fi
 	fi
 	# Exists; check if test case: if file -> ends with .case, if dir -> dir/case exists
-	if [[ -e "${case_path}/${TEST_CASE_SCRIPT_NAME}" ]]; then
+	if [ -e "$case_path/$TEST_CASE_SCRIPT_NAME" ]; then
 		# Fine, path is already a case dir.
 #DEBUG "Existing test script in TC dir identified: `realpath \"${case_path}\"`"
 		# realpath is to strip off trailing slashes that would confuse
@@ -45,9 +45,9 @@ get_case_path(){
 		echo "`realpath \"${case_path}\"`"
 		return 0
 	else
-		if [[ "${case_path%${TEST_CASE_FILE_EXT}}" != "${case_path}" ]]; then
-#DEBUG "Existing single-file TC script identified as-is: ${case_path}"
-			echo "${case_path}"
+		if [ "${case_path%$TEST_CASE_FILE_EXT}" != "$case_path" ]; then
+#DEBUG "Existing single-file TC script identified as-is: $case_path"
+			echo "$case_path"
 			return 0
 		fi
 	fi
@@ -60,7 +60,7 @@ get_case_path(){
 get_case_name(){
 	#!!Shouldn't it have escaped \"...\" as those realpaths above?!
 	name=`basename "${*%$TEST_CASE_FILE_EXT}"`
-	echo ${name}
+	echo $name
 }
 
 #-----------------------------------------------------------------------------
@@ -72,7 +72,7 @@ RUN(){
 
 	if [ "${case_variant_counter}" != "" ]; then
 		case_variant_counter=$(($case_variant_counter + 1))
-		echo "  Test [${case_variant_counter}]: $*" >&2
+		echo "  Test [$case_variant_counter]: $*" >&2
 	else
 		echo "  Test: $*" >&2
 	fi
@@ -85,15 +85,15 @@ RUN(){
 	args=$*
 
 	# Kludge to prepend ./ if no dir in cmd:
-	normalized_dirpath=`dirname "${cmd}"`
-	cmd=${normalized_dirpath}/${cmd}
+	normalized_dirpath=`dirname "$cmd"`
+	cmd=$normalized_dirpath/$cmd
 DEBUG Cmdline to run: "$cmd" $args
 
-	savecd=`pwd`
-	cd "${TEST_CASE_DIR}"
-	"$cmd" $args >> "${TMP_DIR}/${CASE}.out" 2>> "${TMP_DIR}/${CASE}.err"
-	echo $? >> "${TMP_DIR}/${CASE}.retval"
-	cd "${savecd}"
+	savedir=`pwd`
+	cd "$TEST_CASE_DIR"
+	"$cmd" $args >> "$TMP_DIR/${CASE}.out" 2>> "$TMP_DIR/${CASE}.err"
+	echo $? >> "$TMP_DIR/${CASE}.retval"
+	cd "$savedir"
 }
 
 #-----------------------------------------------------------------------------
@@ -140,14 +140,14 @@ normalize_crlf(){
 
 get_make_flavor(){
 	#!!This is allo really stupid yet, sorry...
-	if [[ -n "${MAKE}" ]]; then
-		if which "${MAKE}" >/dev/null; then
+	if [ -n "$MAKE" ]; then
+		if which "$MAKE" >/dev/null; then
 			echo "$MAKE"
 		else
-			ERROR "Make tool was set to '${MAKE}', but it can't be found!"
+			ERROR "Make tool was set to '$MAKE', but it can't be found!"
 			return 1
 		fi
-	elif [[ "$TOOLSET" == "msvc" ]]; then
+	elif [ "$TOOLSET" == "msvc" ]; then
 		echo nmake    # `-nologo` will be applied implicitly
 	else
 		echo gnumake
@@ -159,10 +159,10 @@ get_make_flavor(){
 get_toolset(){
 #!! BB `which` differs from the original GNU version (e.g. at Git), which just can't shut up...
 
-	if [[ -n "$TOOLSET" ]]; then
+	if [ -n "$TOOLSET" ]; then
 #DEBUG "$TOOLSET"
 		echo "$TOOLSET"
-	elif [[ -n "$VCToolsVersion" || -n "$VCTOOLSVERSION" ]]; then #!!?? Must also check upper-cased, BusyBox(?) sometimes(?) converts env var names?!... :-o
+	elif [ -n "$VCToolsVersion" ] || [ -n "$VCTOOLSVERSION" ]; then #!!?? Must also check upper-cased, BusyBox(?) sometimes(?) converts env var names?!... :-o
 		if which cl 2>/dev/null; then
 #DEBUG msvc
 			echo msvc
@@ -170,7 +170,7 @@ get_toolset(){
 			ERROR "The MSVC CLI env. is not setup propery! Forgot to run 'vcvars*.bat'?"
 			return 1
 		fi
-	elif [[ -n "$W64DEVKIT" ]]; then
+	elif [ -n "$W64DEVKIT" ]; then
 #DEBUG "gcc/w64devkit"
 		echo "gcc/w64devkit"
 	elif which gcc 2>/dev/null; then
@@ -194,7 +194,7 @@ build_dir(){
 	#! The makefiles themselves can't easily examine wildcard sources, so:
 	cpp=`find "$build_dir" -maxdepth 1 -name '*.cpp' -print -quit`
 		#!!That `-maxdepth 1` is pretty arbitrary, but this entire crude autobuild support is!...
-	if [[ -z "${MAKE}" || -z "${cpp}" ]]; then
+	if [ -z "${MAKE}" ] || [ -z "${cpp}" ]; then
 		# Nothing to do.
 		return 0
 	fi
@@ -211,9 +211,9 @@ build_dir(){
 	# If the TC has a local makefile (note: single-line TCs share one!),
 	# use that. Otherwise use a non-specific local Makefile, if that exists.
 	# Else, use an internal default ($MAKE-specific) makefile.
-	if [[ -e "${build_dir}/Makefile.${MAKE}" ]]; then
+	if [ -e "${build_dir}/Makefile.${MAKE}" ]; then
 		mkcmd="${mkcmd} -f Makefile.${MAKE}"
-	elif [[ ! -e "${build_dir}/Makefile" ]]; then   # use the internal if no local Makefile
+	elif [ ! -e "${build_dir}/Makefile" ]; then   # use the internal if no local Makefile
 		mkcmd="${mkcmd} ${add_makefile}"
 	fi
 

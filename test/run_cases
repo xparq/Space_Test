@@ -3,7 +3,7 @@ _self=`dirname $0`
 # Pre-init these, as this is the best chance for it:
 export TEST_DIR=`realpath $_self`
 export _TEST_ENGINE_DIR=$TEST_DIR/_engine
-if [[ ! -e "$_TEST_ENGINE_DIR" ]]; then { echo "Invalid dir. structure?!"; exit 1; } fi
+if [ ! -e "$_TEST_ENGINE_DIR" ]; then { echo "Invalid dir. structure?!"; exit 1; } fi
 . $_TEST_ENGINE_DIR/init_once.sh    # <- FATALs could abort the process here.
 
 errors=0

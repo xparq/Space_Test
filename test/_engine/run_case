@@ -1,5 +1,5 @@
 #!/bin/sh
-if [[ -z "$_TEST_ENGINE_DIR" ]]; then
+if [ -z "$_TEST_ENGINE_DIR" ]; then
 	echo "- ERROR: test env. uninitialized! (Run \"init_once.sh\" before \"$0\"!)";
 	exit 101;
 fi
@@ -24,18 +24,18 @@ export CASE
 
 echo "---------------------------------------------------------------"
 DEBUG Identified \"$1\" as test case [$CASE] at \"$case_path\"
-echo CASE \"${CASE}\"
+echo CASE \"$CASE\"
 
-if [[ ! -d  "${case_path}" ]]; then
-	case_script="${case_path}"
-	TEST_CASE_DIR=`dirname "${case_path}"`
+if [ ! -d  "$case_path" ]; then
+	case_script="$case_path"
+	TEST_CASE_DIR=`dirname "$case_path"`
 else
-	case_script="${case_path}/${TEST_CASE_SCRIPT_NAME}"
-	TEST_CASE_DIR=${case_path}
+	case_script="$case_path/$TEST_CASE_SCRIPT_NAME"
+	TEST_CASE_DIR=$case_path
 fi
 
-if [[ ! -e "${case_script}" ]]; then
-	FATAL "Test script not found: \"${case_script}\"!"
+if [ ! -e "$case_script" ]; then
+	FATAL "Test script not found: \"$case_script\"!"
 fi
 
 # Prep. the tmp work file locations...
@@ -65,14 +65,14 @@ case_variant_counter=0
 
 . "${case_script}"
 
-retval=$?; if [[ "$retval" != "0" ]]; then
+retval=$?; if [ "$retval" != "0" ]; then
 	ERROR "Test script failed with unexpected error $retval!"
 	exit 99
 fi
 
 # Find or dyn. regenerate the expfile if defined in a .case script
-if [[ -e         "${TEST_CASE_DIR}/${EXPECT_FILE_NAME}" ]]; then
-	 expfile="${TEST_CASE_DIR}/${EXPECT_FILE_NAME}"
+if [ -e     "$TEST_CASE_DIR/$EXPECT_FILE_NAME" ]; then
+    expfile="$TEST_CASE_DIR/$EXPECT_FILE_NAME"
 
 # NOTE:
 # In a mixed "GNU tools on Windows" env. (like mine) diff may not be able
@@ -82,34 +82,34 @@ if [[ -e         "${TEST_CASE_DIR}/${EXPECT_FILE_NAME}" ]]; then
 # and the user-supplied "expect" file -- which means we'd need to
 # "redirect" that too, the same way we do with an EXPECT clause.
 # (Because obviously we won't touch the opriginal file.)
-	kludge_expf="${TMP_DIR}/${CASE}.expected"
+	kludge_expf="$TMP_DIR/${CASE}.expected"
 	# Better do this together with outfile, later below:
 	# tr -d '\015' < ${expfile} > "${kludge_expf}"
-	cp "${expfile}" "${kludge_expf}"
-	expfile=${kludge_expf}
+	cp "$expfile" "$kludge_expf"
+	expfile=$kludge_expf
 else
-	expfile="${TMP_DIR}/${CASE}.expected"
+	expfile="$TMP_DIR/${CASE}.expected"
 	# $EXPECT must be quoted to preserve newlines.
 	# And mind the -n, too:
-	echo -n "${EXPECT}" > "${expfile}"
+	echo -n "$EXPECT" > "$expfile"
 fi
 
 # Normalizing these would prevent precision-testing some whitespace handling, but the
 # CR/LF mismatches is a bigger issue anyway than what we could handle on this level...
-normalize_crlf "${expfile}"
-normalize_crlf "${outfile}"
+normalize_crlf "$expfile"
+normalize_crlf "$outfile"
 
-#echo diff -b "${outfile}" "${expfile}"
-     diff -b "${expfile}" "${outfile}"
+#echo diff -b "$outfile" "$expfile"
+     diff -b "$expfile" "$outfile"
 
-if [[ $? == 0 ]]; then
+if [ $? == 0 ]; then
 	echo "  OK."
 else
 	echo "  !!!!!!!!!!!!!!!!!!!!!!!!! FAILED !!!!!!!!!!!!!!!!!!!!!!!!!"
 	failed=1
 fi
 
-exit ${failed}
+exit $failed
 
 
 #-----------------------------------------------------------------------------

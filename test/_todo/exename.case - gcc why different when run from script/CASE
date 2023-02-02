@@ -22,7 +22,7 @@ cut: exename
 RUN exename --keep-ext
 RUN exename
 
-if [[ -n "$VCToolsVersion" ]]; then
+if [ -n "$VCToolsVersion" ]; then
 
 #	echo MSVC! >&2
 
