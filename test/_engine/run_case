@@ -1,7 +1,10 @@
 #!/bin/sh
 if [ -z "$_TEST_ENGINE_DIR" ]; then
-	echo "- ERROR: test env. uninitialized! (Run \"init_once.sh\" before \"$0\"!)";
-	exit 101;
+# Will become a problem if this gets changed to a sourced sub-script:
+#	echo "- ERROR: test env. uninitialized. (Run \"init_once.sh\" before \"$0\"!)";
+#	exit 101;
+# But now we are still a top-level command entry, so we can bootstrap alone:
+	export _TEST_ENGINE_DIR=`dirname "$0"`
 fi
 
 . "$_TEST_ENGINE_DIR/init_per_case.sh" || exit $?
@@ -23,8 +26,8 @@ export CASE
 	#! -> "SC2155" (https://github.com/koalaman/shellcheck/wiki/SC2155)
 
 echo "---------------------------------------------------------------"
-DEBUG Identified \"$1\" as test case [$CASE] at \"$case_path\"
-echo CASE \"$CASE\"
+DEBUG "Identified \"$1\" as test case [$CASE] at \"$case_path\""
+echo "CASE \"$CASE\""
 
 if [ ! -d  "$case_path" ]; then
 	case_script="$case_path"
@@ -50,9 +53,6 @@ test -f "${outfile}" && rm "${outfile}"
 test -f "${errfile}" && rm "${errfile}"
 test -f "${retfile}" && rm "${retfile}"
 
-MAKE=`get_make_flavor`
-	# Will be empty on errors!
-
 # Run a build for the test case if it seems to need one... (and $MAKE is set)
 build_dir "$TEST_CASE_DIR" || FATAL "Failed to build the test case!" $?
 
@@ -63,7 +63,7 @@ failed=0
 EXPECT=
 case_variant_counter=0
 
-. "${case_script}"
+. "$case_script"
 
 retval=$?; if [ "$retval" != "0" ]; then
 	ERROR "Test script failed with unexpected error $retval!"

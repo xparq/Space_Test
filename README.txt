@@ -1,4 +1,4 @@
-Space Test v0.11
+Space Test v0.13
 
 Features:
 
@@ -20,7 +20,7 @@ Features:
 Anyway:
 
 - Very small, frugal, self-containing (just a bunch of shell scripts
-  + some change, <1000 lines total)
+  + some change)
 
 - Depends on basically nothing (but BusyBox, and of course the toolset
   you may want to use for (auto)building stuff before testing)
