@@ -25,7 +25,7 @@ export CASE
 	#! otherwise $? coming from the func. would be reset to 0! :-ooo
 	#! -> "SC2155" (https://github.com/koalaman/shellcheck/wiki/SC2155)
 
-echo "---------------------------------------------------------------"
+echo "--------------------------------------------------------------- $((cases_run + 1))"
 DEBUG "Identified \"$1\" as test case [$CASE] at \"$case_path\""
 echo "CASE \"$CASE\""
 
@@ -59,7 +59,7 @@ build_dir "$TEST_CASE_DIR" || FATAL "Failed to build the test case!" $?
 #-----------------------------------
 # Finally, run (source) the case...
 #-----------------------------------
-failed=0
+exitcode=0
 EXPECT=
 case_variant_counter=0
 
@@ -105,11 +105,11 @@ normalize_crlf "$outfile"
 if [ $? == 0 ]; then
 	echo "  OK."
 else
+	exitcode=2
 	echo "  !!!!!!!!!!!!!!!!!!!!!!!!! FAILED !!!!!!!!!!!!!!!!!!!!!!!!!"
-	failed=1
 fi
 
-exit $failed
+exit $exitcode
 
 
 #-----------------------------------------------------------------------------

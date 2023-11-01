@@ -2,7 +2,7 @@
 rem Windows frontend for the real `run_cases` main command script
 
 rem Here's some questionable heuristics for desperately trying to escape to
-rem a proper shell, based assumptions like folks using this are likely also
+rem a proper shell, based on assumptions like folks using this are likely also
 rem use Git, or bash from WSL, or they may just have a stray BusyBox instance
 rem hanging around on the PATH somewhere...
 rem
@@ -80,6 +80,7 @@ set _sh_="%_BB_IN_SPACE_%" sh
 echo Using a downloaded BusyBox ^("%_BB_IN_SPACE_%"^) for shell...
 
 :ready
+set BB_GLOBBING=0
 echo Riding %_sh_%...
 
 rem NOTE: _sh_ can be more than just a single file path (i.e. a command phrase, like "busybox sh")!

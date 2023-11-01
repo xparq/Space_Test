@@ -1,4 +1,4 @@
-Space Test v0.14
+Space Test v0.15
 Superfrugal autotest framework, in case you got stranded on a dead planet
 
 Features:

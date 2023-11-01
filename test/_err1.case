@@ -1,0 +1,2 @@
+RUN echo 1
+EXPECT "0"
