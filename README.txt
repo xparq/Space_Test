@@ -1,4 +1,4 @@
-Space Test v0.15
+Space Test v0.16
 Superfrugal autotest framework, in case you got stranded on a dead planet
 
 Features:
@@ -32,7 +32,8 @@ Anyway:
     RUN something
     EXPECT some result
 
-  - or as shell commands:
+  - or as shell commands (as opposed to directly exec'ing; built-ins like
+    `echo` must be SH'ed):
 
     SH echo -n this
     EXPECT this
@@ -89,7 +90,19 @@ Anyway:
 - Arbitrary multi-level test tree hierarchy
 
 - Flexible runner:
-  `run_cases` for all, or `run_cases some*`, or `run_cases this "and that"`
+
+  `run` to test all, or `run some*`, or `run this "and that"`
+
+  BTW, since there's no reliable way to identify a test (root) dir (you see,
+  it's so flexible, it can be anything!...), it's just assumed to be the
+  parent of the `_engine` dir currently, or whatever the `TEST_DIR` env.
+  var. points to, if set.
+
+  If the test dir is not `_engine/..`, it's recommended to have a simple
+  proxy `run` script there (e.g. just a one-liner, executing the real one
+  at `.../_engine/run[.cmd]`), which could then conveniently set the
+  TEST_DIR variable, and/or pass test case filter params. etc.
+  (Just symlinking to `_engine/run` doesn't work yet, but will: #51.)
 
 - "GitHub-Actions-ready" MSVC and GCC autobuild (for both test-subject
   and custom test-case code)

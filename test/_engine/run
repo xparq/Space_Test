@@ -2,12 +2,28 @@
 unset BB_GLOBBING
 #set -x
 
-_self=`dirname $0`
+_selfdir=`dirname $0`
 # Pre-init these, as this is the best chance for it:
-export TEST_DIR=`realpath $_self`
-export _TEST_ENGINE_DIR=$TEST_DIR/_engine
-if [ ! -e "$_TEST_ENGINE_DIR" ]; then { echo "Invalid dir. structure?!"; exit 1; } fi
+export _TEST_ENGINE_DIR=`realpath $_selfdir`
+#!! This will be invalid when sourced (not exec'ed) by a proxy script (-> #51):
+
+_maybe_TEST_DIR=`realpath $_TEST_ENGINE_DIR/..`
+if [ -z "$TEST_DIR" ]; then
+#!! This (anyway arbitrary) check is useless, while we only support TEST_DIR = ENGINE_DIR/..:
+#	if [ -f "$_maybe_TEST_DIR/run" ] || [ -f "$_maybe_TEST_DIR/run.sh" ] || [ -f "$_maybe_TEST_DIR/run.cmd" ]; then
+		export TEST_DIR=$_maybe_TEST_DIR
+		_reason=" (as detected)"
+#	else
+#		echo "Invalid dir. structure? \"$_maybe_TEST_DIR/run[.sh|.cmd]\" not found!"; exit 126;
+#	fi
+else
+	_reason=" (as specified)"
+fi
+	echo "Using TEST_DIR${_reason}: $TEST_DIR"
+
+
 . $_TEST_ENGINE_DIR/init_once.sh    # <- FATALs could abort the process here.
+
 
 # `export` is critical for $(()), subshelled loops etc.!
 export cases_seen=0
@@ -35,7 +51,6 @@ case $* in *[\*]* ) got_pattern=1;; esac
 #!! ...but this would include all the junk... so, the case file paths will need to be filtered later!
 #!! ...anyway, subdir filtering can't be done with 'find * -name'
 pat=${1:-*}
-#echo "pattern: [$pat] (Press Enter...)"; read
 set +o noglob
 
 use_find=
