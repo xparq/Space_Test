@@ -1,0 +1,7 @@
+# Verify that the test runner will cd to test-case dirs
+
+#! Note: Spaces in the TC name WILL NOT survive this one, unfortunately:
+SH ls "$CASE.*"
+
+EXPECT "cd-to-TCdir.case
+"

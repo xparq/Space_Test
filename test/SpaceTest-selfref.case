@@ -1,0 +1,8 @@
+# This should work in subdirs, too, assuming the test runner would cd to test-case dirs
+# (which is does; there's a complementary case somewhere in *subdir* to verify that).
+
+#! Note: Spaces in the TC name WILL NOT survive this one, unfortunately:
+SH ls "$CASE.*"
+
+EXPECT "SpaceTest-selfref.case
+"
