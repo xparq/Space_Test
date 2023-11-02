@@ -1,5 +1,7 @@
-Space Test v0.17
-Superfrugal autotest framework, in case you got stranded on a dead planet
+Space Test
+  Superfrugal autotest framework, in case you got stranded on a dead planet
+
+  (See _engine/VERSION to identify the instance.)
 
 Features:
 
