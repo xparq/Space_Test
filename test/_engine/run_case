@@ -25,7 +25,8 @@ export CASE
 	#! otherwise $? coming from the func. would be reset to 0! :-ooo
 	#! -> "SC2155" (https://github.com/koalaman/shellcheck/wiki/SC2155)
 
-echo "--------------------------------------------------------------- $((cases_run + 1))"
+echo "
+------------------------------------------------------------------------ $((cases_run + 1))"
 DEBUG "Identified \"$1\" as test case [$CASE] at \"$case_path\""
 echo "CASE \"$CASE\""
 
