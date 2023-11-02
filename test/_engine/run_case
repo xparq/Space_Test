@@ -65,9 +65,10 @@ case_variant_counter=0
 
 . "$case_script"
 
-retval=$?; if [ "$retval" != "0" ]; then
-	ERROR "Test script failed with unexpected error $retval!"
-	exit 99
+retval=$?; if [ "$retval" != "0" ] || [ -s "$errfile" ]; then
+	ERROR "Test script unexpectedly crashed (with error $retval)!"
+	echo -e "  `cat \"$errfile\"`"
+	exit 109
 fi
 
 # Find or dyn. regenerate the expfile if defined in a .case script
@@ -100,9 +101,10 @@ normalize_crlf "$expfile"
 normalize_crlf "$outfile"
 
 #echo diff -b "$outfile" "$expfile"
-     diff -b "$expfile" "$outfile"
+      diff -b "$expfile" "$outfile"
+result=$?
 
-if [ $? == 0 ]; then
+if [ $result == 0 ]; then
 	echo "  OK."
 else
 	exitcode=2

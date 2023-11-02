@@ -121,10 +121,18 @@ list=$list`echo; echo "_.END"`
 # !! Oh, and of course this must come before its call, too:
 #--------------------------------------
 report_and_exit(){
-	if [ "$errors" == "0" ]; then
-		echo "All OK. (Cases run: $((cases_run)))"
+	if [ $errors == 0 ]; then
+		echo "All OK. (Cases run: $cases_run)"
 	else
-		echo -e "\n  ----++==##<!! $((cases_failed)) FAILED CASES !!>##==**---- (of $((cases_run)) completed):"
+		if [ $cases_failed != 0 ]; then
+			failed="$cases_failed FAILED"
+		fi
+		if [ $cases_failed != $errors ]; then
+			crashed="$((errors - cases_failed)) CRASHED"
+			if [ ! -z "$failed" ]; then crashed="${crashed}, "; fi
+		fi
+
+		echo -e "\n  ---++==##<!! ${crashed}${failed} CASE(S) !!>##==**--- (of $cases_run completed, $cases_seen total):"
 		echo -e "$cases_failed_names"
 	fi
 	exit $errors
@@ -137,14 +145,18 @@ echo "$list" | while IFS= read -r name; do
 	if [ "$name" == "_.END" ]; then report_and_exit; fi
 
 	"$tc_runner" "$name"
-
-	if [ ! $? -eq 0 ]; then
-		cases_failed=$((cases_failed + 1))
-		errors=$((errors + 1))
-		cases_failed_names=$cases_failed_names`echo -e "\n\t$name"`
-	fi
+	result=$?
 
 	cases_seen=$((cases_seen + 1))
+	if [ $result == 109 ]; then # The test case didn't even complete!
+		errors=$((errors + 1))
+		continue
+	fi
 	cases_run=$((cases_run + 1))
 
+	if [ ! $result == 0 ]; then
+		cases_failed=$((cases_failed + 1))
+		cases_failed_names=$cases_failed_names`echo -e "\n\t$name"`
+		errors=$((errors + 1))
+	fi
 done

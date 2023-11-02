@@ -1,0 +1,2 @@
+SH echo 1
+EXPECT ""
