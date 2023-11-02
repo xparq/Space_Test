@@ -89,9 +89,7 @@ Anyway:
 - Arbitrary multi-level test tree hierarchy
 
 - Flexible runner:
-  `run_cases` for all, or `run_cases some*`, or `run_cases test-this "and this"`,
-  or with direct paths: `run_cases *.case`, or `run_cases ./here/tc-4.case`
-  (Currently buggy! See #20, #44!)
+  `run_cases` for all, or `run_cases some*`, or `run_cases this "and that"`
 
 - "GitHub-Actions-ready" MSVC and GCC autobuild (for both test-subject
   and custom test-case code)
