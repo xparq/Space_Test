@@ -95,7 +95,10 @@ Anyway:
 
   `run` to test all, or `run some*`, or `run this "and that"`
 
-  BTW, since there's no reliable way to identify a test (root) dir (you see,
+  But no need to be in the test dir, so e.g. `test/run` from the prj. dir
+  (if it's the parent of `test`) would also be fine.
+
+  BTW, since there's no reliable way to identify a test dir (you see,
   it's so flexible, it can be anything!...), it's just assumed to be the
   parent of the `_engine` dir currently, or whatever the `TEST_DIR` env.
   var. points to, if set.
