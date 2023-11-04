@@ -135,8 +135,13 @@ export case_variant_counter=0
 
 # NOTE: thist script *itself* may get aborted on severe shell errors in the
 # TC, so we'd better output stderr early, while we still can!...
-. "$case_script" 2> >(tee -a "$spacerrfile" >&2)
-#. "$case_script" 2>> "$errfile"
+
+savecd=`pwd`
+cd "${TEST_CASE_DIR}"
+	. "$case_script" 2> >(tee -a "$spacerrfile" >&2)
+	#. "$case_script" 2>> "$errfile"
+cd "${savecd}"
+
 
 testcase_status=0
 
@@ -149,7 +154,9 @@ testcase_status=0
 # ABORTED flag, which should be cleared at the end.
 retval=$?; if [ -s "$errfile" ] || [ ! -z "$ABORTED" ]; then
 	ERROR "Test script was terminated (with shell exit code $retval)!"
-#	echo -e "  `cat \"$errfile\"`"
+	if [ ! -z "$ABORTED" ]; then DEBUG "ABORT req.: $ABORTED"; fi
+	DEBUG "accumulated cmd stderr: `cat \"$errfile\"`"
+	echo -e "  `cat \"$errfile\"`"
 	echo "  !!!!!!!!!!!!!!!!!!!!!!!!! ABORTED !!!!!!!!!!!!!!!!!!!!!!!!!"
 	exit $_ABORT_
 fi

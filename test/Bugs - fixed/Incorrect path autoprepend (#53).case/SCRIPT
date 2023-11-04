@@ -1,6 +1,8 @@
-RUN "../../general"
+echo "Current dir: `pwd`"
+
+RUN ../run.me
 EXPECT ""
 
-# Local still works:
+# Local stuff should be unaffected:
 RUN "$CASE"
 EXPECT "OK"

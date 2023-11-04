@@ -123,7 +123,7 @@ Anyway:
 
   `run` to test all, or `run some*`, or `run this "and that"`
 
-  But no need to be in the test dir, so e.g. `test/run` from the prj. dir
+  And no need to be in the test dir, so e.g. `test/run` from the prj. dir
   (if it's the parent of `test`) would also be fine.
 
   BTW, since there's no reliable way to identify a test dir (you see,
@@ -136,6 +136,9 @@ Anyway:
   at `.../_engine/run[.cmd]`), which could then conveniently set the
   TEST_DIR variable, and/or pass test case filter params. etc.
   (Just symlinking to `_engine/run` doesn't work yet, but will: #51.)
+
+  NOTE: outside of Windows + BusyBox (the default for me), wildcard patterns
+  may need to be in single quotes ('pattern*') to work as expected!
 
 - "GitHub-Actions-ready" MSVC and GCC autobuild (for both test-subject
   and custom test-case code)

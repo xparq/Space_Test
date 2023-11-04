@@ -17,7 +17,7 @@ NOTE(){
 	echo "- NOTE: $*" >&2
 }
 DEBUG(){
-	test -n "$SPACE_DEBUG" && echo "....DBG: $*" >&2
+	test -n "$SPACE_DEBUG" && echo -e "....DBG: $*" >&2
 }
 
 CREATE_EMPTY(){
@@ -168,14 +168,12 @@ RUN(){
 #	done
 #	args=$requoted
 #echo "args = $args"
-	savedir=`pwd`
-	cd "$TEST_CASE_DIR"
 		if [ -z "$RUN_WITH_PATH_LOOKUP" ]; then
 			# Prepend ./ if no dir in cmd (see also #53):
 			explicit_dirpath=`dirname "$cmd"`
 			cmd=$explicit_dirpath/`basename "$cmd"`
 		fi
-#DEBUG Cmdline to run: "$cmd" $args
+DEBUG Cmdline to run: "$cmd" $args
 		echo "\"$cmd\" $args"    > "$cmdfile"
 # This has been the only way to get at least \"arg with space\" work on Windows + Git Bash:
 		sh "$cmdfile" >> "$outfile" 2>> "$errfile"
@@ -183,8 +181,6 @@ RUN(){
 #		"$cmd" $args >> "$outfile" 2>> "$errfile"
 		ret=$?
 #		echo $ret >> "$retfile"
-
-	cd "$savedir"
 
 	# Can't do this in run_test, as that only sees the overall results,
 	# not the individual test steps internal to the test case!
@@ -225,13 +221,10 @@ SH(){
 	#echo QUOTED ARGS: $qargs
 	#!!Alas, that probably wouldn't help either, after all... See at RUN()!
 
-	savecd=`pwd`
-	cd "${TEST_CASE_DIR}"
 		echo "sh -c \"$cmd $args\"" > "$cmdfile"
 		sh -c "$cmd $args" >> "$outfile" 2>> "$errfile"
 		ret=$?
 #		echo $ret >> "$retfile"
-	cd "${savecd}"
 
 	# Can't do this in run_test, as that only sees the overall results,
 	# not the individual test steps internal to the test case!

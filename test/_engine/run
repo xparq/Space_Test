@@ -101,6 +101,8 @@ if [ "$use_find" != "" ]; then
 	fi
 
 #	echo -e "--------------- FIND-GENERATED:\n$list"
+	DEBUG "--------------- FIND-GENERATED:\n$list"
+
 else
 	_newline_hack=
 	for c in "$@"; do # <-- just words, may not be valid paths (as opposed to the one with `find`)!
@@ -111,6 +113,7 @@ else
 		_newline_hack="\n"
 	done
 #	echo -e "--------------- DIRECTLY SPECIFIED:\n$list"
+	DEBUG "--------------- DIRECTLY SPECIFIED:\n$list"
 fi
 #echo "Press Enter to proceed...";read
 
