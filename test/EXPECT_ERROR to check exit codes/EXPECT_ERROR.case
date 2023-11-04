@@ -1,0 +1,10 @@
+EXPECT_ERROR 1
+SH false
+
+EXPECT_ERROR 2
+SH return 2
+
+EXPECT_ERROR 0
+SH false
+# This would fail, but force-pass it... (There's an actually failing one in FAIL*/!)
+PASS

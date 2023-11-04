@@ -1,0 +1,10 @@
+noRUN
+
+echo "- Alas, still here, after the error! The sh* shells can't be convinced to \
+*CONSISTENTLY* abort on syntax errors! :-/" 
+
+echo 'Because my sh *DID* abort e.g. in the very similar "EXPECT syntax error case"...'
+
+ABORT
+
+EXPECT nothing

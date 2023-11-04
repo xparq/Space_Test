@@ -20,10 +20,16 @@ Anyway:
 - Very small, frugal, self-containing (just a bunch of shell scripts
   + some change)
 
-- Depends on basically nothing (but BusyBox, and of course the toolset
-  you may want to use for (auto)building stuff before testing)
+- Depends on basically nothing (but some sh shell -- a BusyBox.exe for Windows
+  has been packed, to be sure, but Git's bash, or WSL should be fine), or and
+  of course the toolset you may want to use for (auto)building stuff for the
+  test cases, if needed)
 
 - Everything-agnostic, can help testing anything (and basically anywhere)
+
+- Filenames are the test titles
+  (Which is the main motivation for "aggressive" space (and other misc. char)
+  support in paths.)
 
 - Despite the minimalism and early stage, still fairly comfy & flexible:
   - single-file or subdir test cases
@@ -88,6 +94,28 @@ Anyway:
     "
 
   - or standalone "EXPECT" files (overriding any EXPECT clauses)
+
+- Check for command exit status:
+
+    EXPECT_ERROR
+    RUN thing_returning_nonzero
+
+    EXPECT_ERROR 4
+    RUN thing_that_should_return_4
+
+    EXPECT_ERROR ignore
+    # For all subsequent steps (until another EXPECT_ERROR)
+    RUN retval_doesnt_matter --retval 0
+    RUN retval_doesnt_matter --retval 1
+
+    EXPECT_ERROR warn
+    RUN make -s something # retval will be noted, but not used
+
+- Arbitrary multi-level test tree hierarchy
+
+
+
+- Manual (forced) FAIL, PASS, ABORT
 
 - Arbitrary multi-level test tree hierarchy
 

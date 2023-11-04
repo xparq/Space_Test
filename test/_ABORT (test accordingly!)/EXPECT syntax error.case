@@ -1,0 +1,11 @@
+SH echo Should be aborted!
+
+EXPECT :(
+
+echo "But it isn't?"
+
+
+# Since "But it isn't?" is nowhere to be found in the output, in this case,
+# as opposed to e.g. the "RUN syntax error" case, the shell DOES seem to
+# abort on the syntax error... :-o :-/
+

@@ -1,0 +1,8 @@
+SH "echo Dir list:; ls -r"
+SH echo command 3
+
+EXPECT "Dir list:
+$TEST_CASE_SCRIPT_NAME
+Hi from the test case dir!
+command 3
+"

@@ -1,0 +1,6 @@
+RUN "../../general"
+EXPECT ""
+
+# Local still works:
+RUN "$CASE"
+EXPECT "OK"

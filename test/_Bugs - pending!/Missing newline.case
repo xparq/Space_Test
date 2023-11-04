@@ -1,0 +1,4 @@
+#70
+
+SH echo 2
+EXPECT "2" # Mind the missing newline!

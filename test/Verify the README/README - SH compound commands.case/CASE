@@ -1,8 +1,0 @@
-SH "echo Dir list:; ls -r"
-SH echo command 3
-
-EXPECT "Dir list:
-Hi from the test case dir!
-CASE
-command 3
-"

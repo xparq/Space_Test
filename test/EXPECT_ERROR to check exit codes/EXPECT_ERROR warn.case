@@ -1,0 +1,12 @@
+SH echo "Should see 2 warnings..."
+
+# No warning here
+SH false
+
+EXPECT_ERROR warn
+# 2 warnings should be seen
+SH false
+SH false
+
+EXPECT "Should see 2 warnings...
+"

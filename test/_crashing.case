@@ -1,2 +1,0 @@
-RUN echo "Well, echo isn't RUNnable, it must be run with SH!"
-EXPECT ""

@@ -1,0 +1,3 @@
+RUN echo "Well, echo isn't RUNnable, it must be run with SH!"
+
+EXPECT dummy statement to see if the error code from RUN gets lost...

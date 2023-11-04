@@ -1,0 +1,2 @@
+EXPECT_ERROR 0
+SH return 1

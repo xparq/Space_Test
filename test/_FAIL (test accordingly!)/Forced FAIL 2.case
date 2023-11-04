@@ -1,0 +1,3 @@
+SH echo -n ok
+EXPECT "ok" # No diffing should happen anyway, just varying the syntax a bit...
+FAIL 123
