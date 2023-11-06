@@ -1,8 +1,8 @@
-echo "Current dir: `pwd`"
-
-RUN ../run.me
-EXPECT ""
-
-# Local stuff should be unaffected:
-RUN "$CASE"
-EXPECT "OK"
+echo "Current dir: `pwd`"
+
+RUN ../run.me
+EXPECT ""
+
+# Local stuff should be unaffected:
+RUN "$CASE"
+EXPECT OK

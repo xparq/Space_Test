@@ -1,5 +1,5 @@
-#!! Space in the case name would still fail here! :-/
-SH ls "$CASE.*"
-
-EXPECT "newline-example.case
+#!! Spaces in the case name would still fail here! :-/
+SH ls "$CASE.*"
+
+EXPECT "newline-example.case
 "

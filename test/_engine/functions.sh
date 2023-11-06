@@ -221,6 +221,8 @@ SH(){
 	#echo QUOTED ARGS: $qargs
 	#!!Alas, that probably wouldn't help either, after all... See at RUN()!
 
+DEBUG "SH args: [$args]"
+
 		echo "sh -c \"$cmd $args\"" > "$cmdfile"
 		sh -c "$cmd $args" >> "$outfile" 2>> "$errfile"
 		ret=$?
@@ -363,6 +365,9 @@ build_dir(){
 	#! The makefiles themselves can't easily examine wildcard sources, so:
 	#!!FAILED using -name 'a b' (instead of "a b") with BB's find! :-o
 	cpp=`find "$build_dir" -maxdepth 1 -name "$CASE.cpp" -print -quit`
+		# NOTE: This is (as all other such commands) case-sensitive,
+		# while the actual file names aren't on Windows (NTFS), so
+		# sloppiness would lead to errors like #74!...
 	if [ -z "$cpp" ]; then
 DEBUG "Build: No sources found -> nothing to do."
 			return 0

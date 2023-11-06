@@ -1,10 +1,9 @@
-# Verify that the test runner will cd to test-case dirs
-
-#! Note: Spaces in the TC name WILL NOT survive this one, unfortunately:
-
-echo "Current dir: `pwd`"
-
-SH ls "$CASE.*"
-
-EXPECT "cd_to_parent_of_TC_file.case
-"
+# Verify that the test runner will cd to test-case dirs
+
+echo "Current dir: `pwd`"
+
+#! Note: Spaces in the TC name WILL NOT survive this one, unfortunately:
+SH ls "$CASE.*"
+
+EXPECT "cd_to_parent_of_TC_file.case
+"
