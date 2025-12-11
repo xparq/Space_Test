@@ -248,7 +248,7 @@ EXPECT(){
 	EXPECT=${EXPECT}$*
 }
 EXCEPT(){
-	FATAL "Well, well... Been there, done that! ;)"
+	FATAL "Well, well... Been there, done that!... (Check the spelling of 'EXPECT'! ;) )"
 }
 
 
