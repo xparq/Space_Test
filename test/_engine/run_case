@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 if [ -z "$_TEST_ENGINE_DIR" ]; then
 # Will become a problem if this gets changed to a sourced sub-script:
 #	echo "- ERROR: test env. uninitialized. (Run \"init_once.sh\" before \"$0\"!)";

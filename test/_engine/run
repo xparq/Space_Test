@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 unset BB_GLOBBING
 #set -x
 

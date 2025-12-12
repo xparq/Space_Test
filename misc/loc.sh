@@ -19,4 +19,4 @@ echo /usr/bin/find
 #!! WOW, this differs quite a bit, who knows why!
 #!! E.g. it can't find build-gcc.sh, defs.sh etc.! :-ooooo
 echo BB:
-	busybox find $dir -type f -a \( -name '*.sh' -o -name '*.cmd' -o -name '*akefile*' -o -name 'run_*' \) -a -exec wc -l \{\} \;
+	busybox  find $dir -type f -a \( -name '*.sh' -o -name '*.cmd' -o -name '*akefile*' -o -name 'run_*' \) -a -exec wc -l \{\} \;
