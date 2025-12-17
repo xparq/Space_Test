@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #!!
 #!! NOTE: Git sh insists on "helpfully" screwing around with paths here... :-/
 #!! E.g. "adjusting" "C:/sz/prj/Space_Test/test/tmp"
@@ -15,10 +15,14 @@ MSYS2_ARG_CONV_EXCL=*
 #echo ARGS: $@
 #echo TOOLSET: $TOOLSET
 
-#!!...
+# The makefile passes the exe name actually!
      exe="${1:-$TEST_NAME}"
-     exe="${exe%.cpp}.exe"
+if [ "$OS" = "Windows_NT" ]; then
+	exe="${exe%.cpp}.exe"
+fi
+
 #echo "exe: $exe"
+
 #!!...
 main_src="${1:-$TEST_NAME}"
 main_src="${main_src%.exe}.cpp"
@@ -31,11 +35,11 @@ case $TOOLSET in
 msvc)
 	export INCLUDE="$_TEST_DIR;$INCLUDE"
 	#https://stackoverflow.com/a/73220812/1479945
-	MSYS_NO_PATHCONV=1 cl -nologo -std:c++20 -W4 -wd4100 -EHsc "-Fo$outdir/" "$main_src"
+	MSYS_NO_PATHCONV=1 cl -nologo -std:c++latest -W4 -wd4100 -EHsc "-Fo$outdir/" "$main_src"
 	# ^^^ Redundant now, I guess, with `MSYS2_ARG_CONV_EXCL=*`, but keeping as a memento... ;)
 	;;
 gcc*)
 	#!!?? Not quite sure why GCC on e.g. w64devkit survives the botched path autoconv.:
-	g++ -std=c++20 -Wall "-I${TEST_DIR}" -o "$exe" "$main_src"
+	g++ -std=c++2b -Wall "-I${TEST_DIR}" -I.. -o "$exe" "$main_src"
 	;;
 esac
