@@ -1,4 +1,4 @@
-exe="$CASE.exe"
+exe="$CASE"
 
 RUN "$exe" ---long
 RUN "$exe" --long

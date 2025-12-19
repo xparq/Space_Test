@@ -15,31 +15,29 @@ MSYS2_ARG_CONV_EXCL=*
 #echo ARGS: $@
 #echo TOOLSET: $TOOLSET
 
-# The makefile passes the exe name actually!
-     exe="${1:-$TEST_NAME}"
-if [ "$OS" = "Windows_NT" ]; then
-	exe="${exe%.cpp}.exe"
-fi
+# The makefile passes the case name and also the exe name!
+case="$1"
+exe="$2"
+	#echo "ALL ARGS: [$*]"
+	#echo "case: $case"
+	#echo "exe: $exe"
+	#echo "TEST_DIR: ${TEST_DIR}"
 
-#echo "exe: $exe"
-
-#!!...
-main_src="${1:-$TEST_NAME}"
-main_src="${main_src%.exe}.cpp"
-#echo "src: $main_src"
+main_src="${case}.cpp"
+	#echo "src: $main_src"
 
 outdir="${TMP_DIR:-tmp}"
 mkdir -p "$outdir"
 
 case $TOOLSET in
 msvc)
-	export INCLUDE="$_TEST_DIR;$INCLUDE"
+	export INCLUDE="$_TEST_DIR;$_TEST_DIR/..;$INCLUDE"
 	#https://stackoverflow.com/a/73220812/1479945
-	MSYS_NO_PATHCONV=1 cl -nologo -std:c++latest -W4 -wd4100 -EHsc "-Fo$outdir/" "$main_src"
+	MSYS_NO_PATHCONV=1 cl -nologo -std:c++latest -W4 -wd4100 -EHsc -Zc:preprocessor "-Fo$outdir/" "$main_src"
 	# ^^^ Redundant now, I guess, with `MSYS2_ARG_CONV_EXCL=*`, but keeping as a memento... ;)
 	;;
 gcc*)
 	#!!?? Not quite sure why GCC on e.g. w64devkit survives the botched path autoconv.:
-	g++ -std=c++2b -Wall "-I${TEST_DIR}" -I.. -o "$exe" "$main_src"
+	g++ -std=c++2b -Wall "-I${TEST_DIR}" "-I${TEST_DIR}/.." -o "$exe" "$main_src"
 	;;
 esac

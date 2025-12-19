@@ -113,9 +113,14 @@ abspath_fixup(){
 		if which cygpath >/dev/null 2>/dev/null; then
 			cygpath -u "$p" 2>/dev/null
 		else
-			#!!Mostly untested! (Spaces, idempotency etc.)
-			#!!Actually, it's NOT idempotent: prepends / to POSIX paths INCORRECTLY
-			echo -n "/$p" | sed -e 's/\\/\//g' -e 's/:/\//'
+			# Last-ditch manual c:\... -> /c/... on Windows
+			if [ "$OS" = "Windows_NT" ];  then
+				#!!Mostly untested! (Spaces, idempotency etc.)
+				#!!Actually, it's NOT idempotent: prepends / to ALREADY POSIX paths INCORRECTLY
+				echo -n "/$p" | sed -e 's/\\/\//g' -e 's/:/\//'
+			else
+				echo "$p"
+			fi
 		fi
 	else
 		# Alas, mixed mode (-m) replaces quotes with a some plceholder char []!
@@ -466,7 +471,10 @@ DEBUG "Build: No sources found -> nothing to do."
 	# This "resanitizing" can help bridge some incompatibilities across toolsets/sh
 	# versions (e.g. sh called from gnumake under MinGW & friends):
 	#! Also mind the frustrating var name uppercasing by BB... :-/
+#echo "_sh_ before fixup: [$_sh_]"
+#echo "_SH_ before fixup: [$_SH_]"
 	export _SH_=`abspath_fixup ${_sh_:-$_SH_}`
+#echo "_SH_ AFTER fixup: [$_SH_]"
 		#!!But this would fuck up _SH_ for the rest of the process back here! :-o
 		#!!So we should either save/restore it, or pass it to the build
 		#!!process with a different name!

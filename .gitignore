@@ -8,3 +8,11 @@ tmp/
 *.bak
 *.old
 *.off
+
+# *Sigh...* Some hardcoded Linux-exe test artifact names 
+# from the regression self-tests...
+test/test-demo
+test/general
+test/Bugs - fixed/Incorrect path autoprepend (#53).case/Incorrect path autoprepend (#53)
+test/Examples/Multi-RUN (Args #10).case/Multi-RUN (Args #10)
+test/Examples/Subset/subtree case with build.case/subtree case with build

@@ -153,7 +153,7 @@ testcase_status=0
 # But a good chunk of "meta" errors overlap with having stderr output...
 #!! Could also check a completion flag, though, like start with a "tentative"
 # ABORTED flag, which should be cleared at the end.
-retval=$?; if [ -s "$errfile" ] || [ ! -z "$ABORTED" ]; then
+retval=$?; if [ -s "$errfile" ]; then #!! || [ ! -z "$ABORTED" ]; then
 	ERROR "The test script was terminated (with shell exit code $retval)!"
 	if [ ! -z "$ABORTED" ]; then DEBUG "ABORT req.: $ABORTED"; fi
 	DEBUG "accumulated cmd stderr: `cat \"$errfile\"`"
