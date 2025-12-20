@@ -3,7 +3,7 @@
 echo "Current dir: `pwd`"
 
 #! Note: Spaces in the TC name WILL NOT survive this one, unfortunately:
-SH ls "$CASE.*"
+SH ls -S "$CASE.*"
 
 EXPECT "cd_to_parent_of_TC_file.case
 "

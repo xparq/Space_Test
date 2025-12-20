@@ -1,6 +1,6 @@
 echo "Current dir: `pwd`"
 
-SH ls *
-EXPECT "$TEST_CASE_SCRIPT_NAME
-marker
+SH ls -rS *
+EXPECT "marker
+$TEST_CASE_SCRIPT_NAME
 "

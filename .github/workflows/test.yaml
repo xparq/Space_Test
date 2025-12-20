@@ -11,21 +11,32 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    runs-on: windows-latest
 
+  regtest-windows-msvc:
+    runs-on: windows-latest
     env:
       SPACE_DEBUG: 1
     
     steps:
-
     - name: Checkout...
       uses: actions/checkout@v3
 
-    - name: Setup MSVC/CLI dev. env...
+    - name: Setup MSVC/CLI...
       uses: ilammy/msvc-dev-cmd@v1.12.0
 
-    - name: Run the tests...
+    - name: Run the regression tests...
       shell: cmd
-      run: |
-        test\run.cmd
+      run: test\run
+
+
+  regtest-linux-gcc:
+    runs-on: ubuntu-latest
+    env:
+      SPACE_DEBUG: 1
+
+    steps:
+    - name: Checkout...
+      uses: actions/checkout@v3
+
+    - name: Run the regression tests...
+      run: test/run
