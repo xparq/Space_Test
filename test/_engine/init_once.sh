@@ -1,5 +1,3 @@
-export SPACE_TEST_VERSION=0.28
-
 #! Don't forget to export everything (non-local), as the per-case runs will be
 #! separate processes! (WHY, BTW??)
 
@@ -10,10 +8,20 @@ if [ -z "$_TEST_ENGINE_DIR" ]; then
 	echo "- ERROR: _TEST_ENGINE_DIR must be set before calling init_once.sh!"
 	exit 101
 fi
+#-----------------------------------------------------------------------------
+export SPACE_TEST_ENGINE_VERSION=$(cat ${_TEST_ENGINE_DIR}/VERSION | xargs)
+	# xargs is just to strip any surrounding *inline* whitespace.
+	# $() have removed any surrounding newlines already.
+#-----------------------------------------------------------------------------
 # ...but it's not required to have already been normalized, so:
 _TEST_ENGINE_DIR=`realpath ${_TEST_ENGINE_DIR}`
 export SPACE_TEST_ENGINE_DIR=$_TEST_ENGINE_DIR
 . $_TEST_ENGINE_DIR/functions.sh
+#-----------------------------------------------------------------------------
+# Banner...
+#!! No config yet, so can't control it (also: DEBUG is still a noop) here!
+echo "Space Test $SPACE_TEST_ENGINE_VERSION"
+#-----------------------------------------------------------------------------
 
 # This should also come preset, but we can fallback to CWD:
 export TEST_DIR=${TEST_DIR:-`pwd`}

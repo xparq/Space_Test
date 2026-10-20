@@ -1,0 +1,6 @@
+#!! This ends up in SH() as `-n 0.29.0 ]`...:
+#!!SH [ -n "$SPACE_TEST_ENGINE_VERSION" ] && echo OK
+
+[ -n "$SPACE_TEST_ENGINE_VERSION" ] && SH echo OK
+
+EXPECT "OK"
