@@ -39,9 +39,9 @@ case $TOOLSET in
 msvc)
 	export INCLUDE="$_TEST_DIR;$_TEST_DIR/..;$INCLUDE"
 	#https://stackoverflow.com/a/73220812/1479945
-	cmd="MSYS_NO_PATHCONV=1 cl -nologo $_CFLAGS_MSVC $CFLAGS_MSVC \"-Fo$outdir/\" \"$main_src\" $CFLAGS_MSVC_"
-#!OLD:	MSYS_NO_PATHCONV=1 cl -nologo $_CFLAGS_MSVC -std:c++latest -W4 -wd4100 -EHsc -Zc:preprocessor  "-Fo$outdir/"   "$main_src"  $CFLAGS_MSVC_
-#!OLD:	# ^^^ Redundant now, I guess, with `MSYS2_ARG_CONV_EXCL=*`, but keeping as a memento... ;)
+	cmd="cl -nologo $_CFLAGS_MSVC $CFLAGS_MSVC \"-Fo$outdir/\" \"$main_src\" $CFLAGS_MSVC_"
+	#!OLD:	MSYS_NO_PATHCONV=1 cl ...
+	#!OLD:	# ^^^ Redundant now, with `export MSYS2_ARG_CONV_EXCL=*`, but keeping as a memento!... ;)
 	;;
 gcc*)
 	# $CPATH is used implicitly"
