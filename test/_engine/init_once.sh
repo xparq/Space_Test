@@ -1,4 +1,4 @@
-export SPACE_TEST_VERSION=0.14
+export SPACE_TEST_VERSION=0.28
 
 #! Don't forget to export everything (non-local), as the per-case runs will be
 #! separate processes! (WHY, BTW??)
@@ -12,6 +12,7 @@ if [ -z "$_TEST_ENGINE_DIR" ]; then
 fi
 # ...but it's not required to have already been normalized, so:
 _TEST_ENGINE_DIR=`realpath ${_TEST_ENGINE_DIR}`
+export SPACE_TEST_ENGINE_DIR=$_TEST_ENGINE_DIR
 . $_TEST_ENGINE_DIR/functions.sh
 
 # This should also come preset, but we can fallback to CWD:
@@ -51,6 +52,10 @@ export TEST_NAME=${TEST_NAME:-test}
 export EXPECT_FILE_NAME=${EXPECT_FILE_NAME:-EXPECT}
 export TEST_CASE_SCRIPT_NAME=${TEST_CASE_SCRIPT_NAME:-SCRIPT}
 export TEST_CASE_FILE_EXT=${TEST_CASE_FILE_EXT:-.case}
+# Public globals should be prefixed with `SPACE_` (most legacy names don't yet):
+export SPACE_TC_SETUP_SCRIPT_NAME="setup.sh"
+export SPACE_TC_CLEANUP_SCRIPT_NAME="cleanup.sh"
+
 
 # "Soft" defaults:
 export TOOLSET=`get_toolset`
