@@ -1,0 +1,50 @@
+file="filename with spaces.in"
+othervar="filename with spaces.in"
+indirect_f="$othervar"
+qtick="it's tricky"
+empty=""
+
+RUN_WITH_PATH_LOOKUP="1"  # Not `./cat`...
+
+#----------------
+# RUN...
+#
+
+RUN cat "$file"
+EXPECT OK!
+
+RUN cat "$indirect_f"
+EXPECT OK!
+
+#----------------
+# SH...
+#
+
+SH echo `cat "$file"`
+EXPECT "OK!
+"
+
+SH cat "$indirect_f"
+EXPECT "OK!"
+
+SH echo "$qtick"
+EXPECT "it's tricky
+"
+
+SH echo $qtick
+EXPECT "it's tricky
+"
+
+SH echo -n "$empty"
+EXPECT ""
+
+
+#-----------------------------------------------------------------------------------
+# Legacy workaround forms, for the compatibility-extended `q()` in functions.sh...
+
+#RUN cat "'$file'"
+#EXPECT OK!
+
+filename_quoted_twice="'filename with spaces.in'"
+#RUN cat "$filename_quoted_twice"
+#EXPECT OK!

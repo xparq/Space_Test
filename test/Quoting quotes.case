@@ -1,0 +1,8 @@
+RUN_WITH_PATH_LOOKUP="1"  # Not `./echo`...
+
+RUN echo "say \"hi\" and \$5 and \\ ok"
+EXPECT "say \"hi\" and \$5 and \\ ok
+"
+SH echo "accumulated\; mind the last newline:"
+EXPECT "accumulated\; mind the last newline:
+"
