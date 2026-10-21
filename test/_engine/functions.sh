@@ -143,7 +143,13 @@ abspath_fixup(){
 # RUN/SH when referring to vars with values that may contain spaces... -> #108
 # Supplied by Claude Opus 5.5. See used in RUN and SH!
 q(){
-	case $1 in *[[:space:]\'\"]*) printf "'%s'" "$(printf %s "$1" | sed "s/'/'\\\\''/g")" ;; *) printf %s "$1" ;; esac;
+# NEW:
+	case $1 in
+	*[[:space:]\'\"\\\$\`]*) printf "'%s'" "$(printf %s "$1" | sed "s/'/'\\\\''/g")" ;;
+	*) printf %s "$1" ;;
+	esac
+#!!OLD:
+#!!	case $1 in *[[:space:]\'\"]*)       printf "'%s'" "$(printf %s "$1" | sed "s/'/'\\\\''/g")" ;; *) printf %s "$1" ;; esac;
 }
 # Or, extended to support even the old awkward double quoting too:
 #q(){

@@ -1,0 +1,17 @@
+# Supplied by Claude Opus 5.5 for its own enhanced quoting triggers in `q()` (in functions.sh).
+
+RUN_WITH_PATH_LOOKUP="1"
+
+RUN printf '%s\n' 'a\b' '$HOME' '`pwd`' 'end\'
+EXPECT 'a\b
+$HOME
+`pwd`
+end\
+'
+
+SH printf '%s\n' 'a\b' '$HOME' '`pwd`' 'end\'
+EXPECT 'a\b
+$HOME
+`pwd`
+end\
+'
